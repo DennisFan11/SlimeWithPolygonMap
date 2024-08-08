@@ -1,9 +1,7 @@
 extends Node2D
+###ver 0.01 (方案一) 多邊形地圖生成
 
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
 
 
 
