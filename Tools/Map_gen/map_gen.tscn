@@ -1,0 +1,95 @@
+[gd_scene load_steps=5 format=3 uid="uid://p612bdjul2ey"]
+
+[ext_resource type="Script" path="res://Tools/Map_gen/map_gen.gd" id="1_fqmn4"]
+[ext_resource type="Shader" uid="uid://capchccxte6v0" path="res://Tools/Map_gen/map_gen.tres" id="2_6gji7"]
+[ext_resource type="Texture2D" uid="uid://bckctufbjkns6" path="res://Tools/Map_gen/Sprite-0001.png" id="3_jt1jw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kr16r"]
+shader = ExtResource("2_6gji7")
+shader_parameter/Stone = Vector3(0.518, 0.388, 0.345)
+shader_parameter/Iorn = Vector3(0.5, 0.5, 0.5)
+shader_parameter/Copper = Vector3(0.682, 0.369, 0.243)
+shader_parameter/Lumium = Vector3(0.047, 0.522, 0.6)
+shader_parameter/Coal = Vector3(0.1, 0.1, 0.1)
+
+[node name="Map_gen" type="Node2D"]
+script = ExtResource("1_fqmn4")
+
+[node name="Panel" type="Panel" parent="."]
+offset_left = -128.0
+offset_top = -128.0
+offset_right = 1280.0
+offset_bottom = 768.0
+size_flags_horizontal = 0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 320.0
+offset_top = 64.0
+offset_right = 832.0
+offset_bottom = 576.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="world" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+material = SubResource("ShaderMaterial_kr16r")
+position = Vector2(256, 256)
+texture = ExtResource("3_jt1jw")
+
+[node name="Camera2D" type="Camera2D" parent="SubViewportContainer/SubViewport"]
+offset = Vector2(256, 256)
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 104.0
+offset_bottom = 104.0
+
+[node name="Panel" type="Panel" parent="Control"]
+layout_mode = 0
+offset_right = 150.0
+offset_bottom = 150.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Radius" type="SpinBox" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+min_value = 5.0
+value = 5.0
+alignment = 1
+prefix = "Radius"
+suffix = " block"
+
+[node name="BlockSize" type="SpinBox" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+min_value = 10.0
+max_value = 150.0
+value = 10.0
+alignment = 1
+prefix = "Block size"
+suffix = "pix"
+
+[node name="HSeparator" type="HSeparator" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Save" type="Button" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Save"
+
+[connection signal="value_changed" from="Control/Panel/VBoxContainer/Radius" to="." method="_on_radius_value_changed"]
+[connection signal="value_changed" from="Control/Panel/VBoxContainer/BlockSize" to="." method="_on_block_size_value_changed"]
+[connection signal="button_down" from="Control/Panel/VBoxContainer/Save" to="." method="_on_save_button_down"]

@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://bi8vhddutn6p4"]
+
+[ext_resource type="Script" path="res://map_node/block/block.gd" id="1_h1t5x"]
+
+[node name="Block" type="Node2D"]
+script = ExtResource("1_h1t5x")
+
+[node name="Iorn" type="Node2D" parent="."]
+
+[node name="Copper" type="Node2D" parent="."]
+
+[node name="Lumium" type="Node2D" parent="."]
+
+[node name="Stone" type="Node2D" parent="."]
+
+[node name="Coal" type="Node2D" parent="."]
+
+[node name="Polygon2D" type="Polygon2D" parent="."]

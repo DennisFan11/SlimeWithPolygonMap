@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://blnwdifww66cs"]
+
+[ext_resource type="PackedScene" uid="uid://1uq0nql67i3x" path="res://map_node/map_node.tscn" id="1_cuc1h"]
+[ext_resource type="Script" path="res://main/main_game.gd" id="1_dwdkl"]
+
+[node name="main_game" type="Node2D"]
+script = ExtResource("1_dwdkl")
+
+[node name="Map_node" parent="." instance=ExtResource("1_cuc1h")]
+
+[node name="test_node" type="Node2D" parent="."]
+
+[node name="camera" type="Camera2D" parent="test_node"]
+unique_name_in_owner = true
+
+[node name="ColorRect" type="ColorRect" parent="test_node"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect2" type="ColorRect" parent="test_node"]
+offset_left = -40.0
+offset_top = -40.0
