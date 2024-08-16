@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcm6kqgqyclg4"]
+
+[ext_resource type="Script" path="res://game/procedural_animation/slime/slime.gd" id="1_u2nx8"]
+
+[node name="slime" type="Node2D"]
+script = ExtResource("1_u2nx8")
+
+[node name="Node" type="Node" parent="."]
+
+[node name="Polygon2D" type="Polygon2D" parent="Node"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+offset_left = -2.0
+offset_top = -2.0
+offset_right = 2.0
+offset_bottom = 2.0
+color = Color(0, 1, 1, 1)

@@ -1,15 +1,20 @@
+class_name Map_node
 extends Node2D
-var BLOCK_SCENE := preload("res://map_node/block/block.tscn")
+
 
 func _ready():
 	_load()
-func _load()-> void:
-	var file:Map_data = ResourceLoader.load("res://save_map.tres", "Map_data")
-	print(file.test)
-	for i:Block_data in file.blocks:
-		var node = BLOCK_SCENE.instantiate()
-		add_child(node)
-		node.set_block(i)
 	
-func _save()-> void:
+#func get_blocks(global_pos:Vector2i)-> Array[Block]: # 委派
+	#return data.get_blocks(global_pos)
+
+
+var data:Terrain_data
+func _load()-> void:
+	var data = ResourceLoader.load("res://save_map.tres", "Terrain_data")
+	print("code: ", data.test_value) # 13 = ok
+	add_child(data.full_load())
+	
+	
+func _save()-> void: #FIXME
 	pass

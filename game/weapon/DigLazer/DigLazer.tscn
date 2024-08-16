@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://dfjnjfj0glcv0"]
+
+[ext_resource type="Script" path="res://game/weapon/DigLazer/DigLazer.gd" id="1_ho5tp"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7jmfp"]
+size = Vector2(25, 25)
+
+[node name="DigLazer" type="Node2D"]
+script = ExtResource("1_ho5tp")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+position = Vector2(-8, 0)
+scale = Vector2(8, 8)
+color = Color(0.771447, 0.793181, 0.793604, 1)
+polygon = PackedVector2Array(3, -3, 11, -3, 12, -4, 14, -2, 13, -1, 12, -1, 9, -1, 8, 0, 9, 1, 12, 1, 13, 1, 14, 2, 12, 4, 11, 3, 3, 3, 1, 2, 1, 1, 2, 1, 2, -1, 1, -1, 1, -2)
+
+[node name="Ray" type="ShapeCast2D" parent="."]
+unique_name_in_owner = true
+visible = false
+shape = SubResource("RectangleShape2D_7jmfp")
+target_position = Vector2(1000, 0)
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="Colli" type="CollisionPolygon2D" parent="Area2D"]
+unique_name_in_owner = true
+polygon = PackedVector2Array(-4.25, -5, 0, -5, 0.75, -4.75, 1.25, -4, 2.25, -2, 2.25, 2, 1.25, 4, 0.75, 4.75, 0, 5, -4.25, 5)

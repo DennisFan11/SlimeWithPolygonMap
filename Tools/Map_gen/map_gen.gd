@@ -3,130 +3,133 @@ extends Node2D
 @onready var viewport:SubViewport = $SubViewportContainer/SubViewport
 @onready var camera:Camera2D = $SubViewportContainer/SubViewport/Camera2D
 
-var Radius:int = 30 : #block
+var Resolution:int = 300 : #pix
 	set(new):
-		Radius = new
+		Resolution = new
 		_world_update()
-var Block_size:int = 50: #pix
+var Block_size:int = 100: #pix
 	set(new):
 		Block_size = new
 		_world_update()
 
+
+
+
+
+
+func _on_radius_value_changed(value):
+	Resolution = value
+func _on_block_size_value_changed(value):
+	Block_size = value
+
 func _world_update()->void :
-	var r:int = Radius * 2 * Block_size # edge
-	camera.offset = Vector2(r,r)/2
-	world.position = Vector2(r,r) / 2
-	world.scale = Vector2.ONE * (r/512.0)
+	var vec := Vector2.ONE * Resolution
+	camera.offset = vec / 2
+	camera.zoom = Vector2.ONE
+	world.position = vec / 2
+	world.scale = vec / 512.0
 	
 enum {IORN, COPPER, LUMIUM, STONE, COAL}
 const colors = {
-	IORN: Color(0.5, 0.5, 0.5, 1),
-	COPPER: Color(0.682353, 0.368627, 0.243137, 1),
-	LUMIUM: Color(0.0470588, 0.521569, 0.6, 1),
-	STONE: Color(0.517647, 0.388235, 0.345098, 1),
-	COAL: Color(0.1, 0.1, 0.1, 1)
+	IORN: Color("7f7f7f"),
+	COPPER: Color("ae5e3e"),
+	LUMIUM: Color("0c8599"),
+	STONE: Color("846358"),
+	COAL: Color("191919")
 }
-
-
 func _set_color():
-	const Iorn = Color(0.5, 0.5, 0.5)
-	const Copper = Color(0.682353, 0.368627, 0.243137)
-	const Lumium = Color(0.0470588, 0.521569, 0.6)
-	const Stone = Color(0.517647, 0.388235, 0.345098)
-	const Coal = Color(0.1, 0.1, 0.1)
-	world.material.set_shader_parameter("Iorn", Iorn)
-	world.material.set_shader_parameter("Copper", Copper)
-	world.material.set_shader_parameter("Lumium", Lumium)
-	world.material.set_shader_parameter("Stone", Stone)
-	world.material.set_shader_parameter("Coal", Coal)
+	world.material.set_shader_parameter("Iorn", colors[IORN])
+	world.material.set_shader_parameter("Copper", colors[COPPER])
+	world.material.set_shader_parameter("Lumium", colors[LUMIUM])
+	world.material.set_shader_parameter("Stone", colors[STONE])
+	world.material.set_shader_parameter("Coal", colors[COAL])
 
 func _ready():
-	var radius = $Control/Panel/VBoxContainer/Radius
+	var resolution = $Control/Panel/VBoxContainer/Resolution
 	var block_size = $Control/Panel/VBoxContainer/BlockSize
-	radius.value = Radius
+	resolution.value = Resolution
 	block_size.value = Block_size
 	_world_update()
 	_set_color()
-func _on_radius_value_changed(value):
-	Radius = value
-func _on_block_size_value_changed(value):
-	Block_size = value
+func _process(delta):
+	camera.offset += Input.get_vector("a", "d", "w", "s")*delta*200
+func _input(event):
+	if event.is_action("zoom_in"):
+		camera.zoom *= 1.05
+	elif event.is_action("zoom_out"):
+		camera.zoom *= 0.95
+
+	
 func _on_save_button_down(): # SAVE MAP
-	var data = _map_data_gen()
-	data.test = 13
+	var data := await _map_data_gen()
+	data.test_value = 13
 	# 使用 ResourceSaver 保存资源
 	var error = ResourceSaver.save(data, "res://save_map.tres",0)
 	if error == OK:
 		print("Resource saved successfully!")
 	else:
 		print("Failed to save resource: ", error)
-	
-	
-	print("saved!")
-func _input(event):
-	if event.is_action("zoom_in"):
-		camera.zoom *= 1.05
-	elif event.is_action("zoom_out"):
-		camera.zoom *= 0.95
-func _process(delta):
-	camera.position += Input.get_vector("a", "d", "w", "s")*delta*200
+	_world_update()
 
-func _get_img()-> Image:
+
+func _get_img(pos:Vector2i, size:Vector2i)-> Image:
+	var vec := Vector2.ONE * Resolution
 	
-	var r:int = Radius * 2 * Block_size # edge
-	
-	camera.offset = Vector2(r,r)/2
-	camera.position = Vector2.ZERO
+	camera.offset = pos + (size/2)
 	camera.zoom = Vector2.ONE
+	world.position = vec / 2
+	world.scale = vec / 512.0
+	viewport.size = size
 	
-	world.position = Vector2(r,r) / 2
-	world.scale = Vector2.ONE * (r/512.0)
-	
-	viewport.size = Vector2(r,r)
-	
+	await RenderingServer.frame_post_draw
 	return viewport.get_texture().get_image()
-	
-func _img_to_polygon(img:Image)-> Array[Polygon]:
-	var arr:Array[Polygon] = []
-	for i in colors.keys():
-		var bitmap = BitMap.new()
-		bitmap.create(img.get_size())
-		
-		for x in range(img.get_size().x):
-			for y in range(img.get_size().y):
-				#print(img.get_pixel(x,y), " and ", colors[i])
-				if img.get_pixel(x,y).to_abgr32() == colors[i].to_abgr32():
-					#print("true")
-					bitmap.set_bit(x, y, true)
-		
-		var poly = Polygon.new()
-		poly.type = i
-		poly.polygon = bitmap.opaque_to_polygons(Rect2(Vector2(), bitmap.get_size()), 0.1 )
-		arr.append(poly)
-	return arr
 
-func _map_data_gen()-> Map_data:
-	var r:int = (Radius * 2) * Block_size
-	_get_img()
-	var map_img:Image = _get_img()
-	var map_data:Map_data = Map_data.new()
+
+
+func _map_data_gen()-> Terrain_data:
+	var terrain_data := Terrain_data.new()
 	
+	var square = PackedVector2Array([
+		Vector2(0.0, 0.0),
+		Vector2(Block_size, 0.0),
+		Vector2(Block_size, Block_size),
+		Vector2(0.0, Block_size)
+	])
+	var faild = 0
+	var saved = 0
 	
-	var center:Vector2 = Vector2(r, r)/2
+	var cut_size = Vector2i(100,100)
+	for block_x:int in range(0, Resolution, cut_size.x):
+		for block_y:int in range(0, Resolution, cut_size.y):
+			var block_pos := Vector2i(block_x, block_y)
+			var map_img := await _get_img(block_pos, cut_size)# pixel
+			print("cutting pos: ", block_pos)
+			
+			for x in range(block_pos.x, block_pos.x + cut_size.x):
+				for y in range(block_pos.y, block_pos.y + cut_size.y):
+					# 填充block
+					var block := Block_data.new()
+					var pixel := map_img.get_pixelv(Vector2i(x,y)%cut_size)
+					block.position = Vector2i(x,y) * Block_size
+					block.polygon = square
+			
+					block.type = -1 # Color match
+					for i in colors.keys():
+						if colors[i].is_equal_approx(pixel):
+							block.type = i
+							saved+=1
+					if block.type == -1:
+						if pixel== Color(0,0,0,0) or pixel == Color(0,0,0,1): continue
+						#print("pixel match faild! ", pixel)
+						faild+=1
+						continue
+					terrain_data.blocks[Vector2i(x,y)] = block
+					
+	terrain_data.BlockSize = Vector2.ONE * Block_size
+	terrain_data.Resolution = Vector2.ONE * Resolution
 	
-	for x:int in range(Radius * 2):
-		for y:int in range(Radius * 2):
-			var pos:Vector2 = Vector2(x,y) * Block_size
-			#if (pos - center).length() > (r/2): continue # 截斷
-			
-			# 填充block
-			var block:Block_data = Block_data.new()
-			var rect:Rect2i = Rect2i(pos, Vector2(Block_size, Block_size) )
-			block.pos = pos
-			block.polygons = _img_to_polygon( map_img.get_region(rect) )
-			
-			
-			map_data.blocks.append(block)
-			print("block(", x,",", y, ") saved!")
-	map_img.save_png("check.png")
-	return map_data
+	print(saved, " block saved!")
+	print(faild, " block faild!")
+	print("size = ", terrain_data.blocks.size())
+	#map_img.save_png("check.png")
+	return terrain_data

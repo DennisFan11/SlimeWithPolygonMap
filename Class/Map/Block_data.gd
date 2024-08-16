@@ -1,6 +1,6 @@
 class_name Block_data
 extends Resource
 
-
-@export var polygons:Array[Polygon]
-@export var pos:Vector2 = Vector2.ZERO
+@export var polygon:PackedVector2Array
+@export var position:Vector2
+@export var type:int
