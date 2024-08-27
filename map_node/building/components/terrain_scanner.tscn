@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://br808mkkt3ntq"]
+
+[ext_resource type="Script" path="res://map_node/building/components/terrain_scanner.gd" id="1_auh8r"]
+
+[node name="Terrain_scanner" type="Node"]
+script = ExtResource("1_auh8r")
+
+[node name="Node2D" type="Node2D" parent="."]

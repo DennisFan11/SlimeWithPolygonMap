@@ -1,6 +1,22 @@
-[gd_scene load_steps=2 format=3 uid="uid://1uq0nql67i3x"]
+[gd_scene load_steps=6 format=3 uid="uid://1uq0nql67i3x"]
 
 [ext_resource type="Script" path="res://map_node/map_node.gd" id="1_lmily"]
+[ext_resource type="Shader" path="res://map_node/map_node.gdshader" id="2_no47x"]
+
+[sub_resource type="Curve" id="Curve_qyl5w"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.454183, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_six0b"]
+curve = SubResource("Curve_qyl5w")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7jfso"]
+shader = ExtResource("2_no47x")
+shader_parameter/curve_texture = SubResource("CurveTexture_six0b")
 
 [node name="Map_node" type="Node2D"]
 script = ExtResource("1_lmily")
+
+[node name="CanvasGroup" type="CanvasGroup" parent="."]
+material = SubResource("ShaderMaterial_7jfso")
+use_mipmaps = true

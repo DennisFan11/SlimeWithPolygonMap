@@ -1,7 +1,7 @@
 extends Destruction
 
-const R = 50.0
-const POINT_SIZE = 20
+const R = 20.0 #70
+const POINT_SIZE = 20 #20
 func _polygon_init():
 	var arr = []
 	for i in range(POINT_SIZE):
@@ -16,8 +16,7 @@ func _ready():
 func _physics_process(delta):
 	global_position = get_global_mouse_position()
 	if Input.is_action_pressed("click"):
-		construct(%Area.get_overlapping_bodies(), _polygon_to_global(%Colli.polygon))
+		construct(%Area.get_overlapping_bodies(), _polygon_to_global(%Colli.polygon),$Selector)
 		
 	if Input.is_action_pressed("rclick"):
 		destruct(%Area.get_overlapping_bodies(), _polygon_to_global(%Colli.polygon))
-	

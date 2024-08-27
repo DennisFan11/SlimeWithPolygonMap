@@ -1,16 +1,20 @@
-[gd_scene load_steps=2 format=3 uid="uid://bcm6kqgqyclg4"]
+[gd_scene load_steps=4 format=3 uid="uid://bcm6kqgqyclg4"]
 
 [ext_resource type="Script" path="res://game/procedural_animation/slime/slime.gd" id="1_u2nx8"]
+[ext_resource type="Script" path="res://Tools/SmoothPath/SmoothPath.gd" id="2_2vglx"]
+
+[sub_resource type="Curve2D" id="Curve2D_5imna"]
 
 [node name="slime" type="Node2D"]
 script = ExtResource("1_u2nx8")
 
 [node name="Node" type="Node" parent="."]
 
-[node name="Polygon2D" type="Polygon2D" parent="Node"]
+[node name="SmoothPath" type="Path2D" parent="Node"]
+curve = SubResource("Curve2D_5imna")
+script = ExtResource("2_2vglx")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-visible = false
 offset_left = -2.0
 offset_top = -2.0
 offset_right = 2.0

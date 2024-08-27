@@ -1,7 +1,8 @@
+class_name SlimePoint
 extends CharacterBody2D
-var origin:Vector2
-var fixed_origin:Vector2
-var center:Vector2
+var origin:Vector2 # 本地錨點
+var fixed_origin:Vector2 #全域錨點
+var center:Vector2 #全域
 
 
 #hook's law: F = -K * x
@@ -26,12 +27,10 @@ func set_height(height:float):
 #func set_height(height):
 	#velocity += height
 
-
-
-
-
 func slime_update(spring_constant, damping):
 	var force = spring_constant * (fixed_origin - global_position)
 	velocity += force
 	velocity *= damping  # 加入阻尼
 	move_and_slide()
+	if (fixed_origin - global_position).length() >= 70:
+		global_position = center#fixed_origin

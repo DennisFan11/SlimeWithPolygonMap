@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://game/procedural_animation/slime/slime_body/slime_body.gd" id="1_8ta6o"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0dnvt"]
-radius = 3.0
+radius = 5.0
 
 [node name="slime_body" type="CharacterBody2D" groups=["slime_body"]]
 collision_layer = 2

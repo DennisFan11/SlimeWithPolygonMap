@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://cognosnyikmr2"]
+
+[ext_resource type="PackedScene" uid="uid://0w2gcyqsp1vb" path="res://UI/Building/Building.tscn" id="1_cwweo"]
+[ext_resource type="PackedScene" uid="uid://cs156esemda8n" path="res://UI/CheatTools/cheat_tools.tscn" id="2_avdtr"]
+
+[node name="UI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Control" parent="." instance=ExtResource("1_cwweo")]
+layout_mode = 1
+
+[node name="CheatTools" parent="." instance=ExtResource("2_avdtr")]
+layout_mode = 1

@@ -2,6 +2,8 @@ class_name Terrain_data
 extends Resource
 
 @export var blocks:Dictionary #[Vector2i, Block_data]
+@export var split_blocks:Array[Block_data]
+
 @export var Resolution:Vector2i
 @export var BlockSize:Vector2i
 

@@ -1,0 +1,48 @@
+[gd_scene load_steps=8 format=3 uid="uid://b8ux4ecamikab"]
+
+[ext_resource type="Script" path="res://map_node/building/drill/drill.gd" id="1_pjbws"]
+[ext_resource type="Texture2D" uid="uid://cfwup1sbphx3p" path="res://map_node/building/drill/drillA.png" id="1_t76pf"]
+[ext_resource type="Texture2D" uid="uid://dmbk3w244sq84" path="res://map_node/building/drill/drillB.png" id="2_a2pb7"]
+[ext_resource type="PackedScene" uid="uid://br808mkkt3ntq" path="res://map_node/building/components/terrain_scanner.tscn" id="4_txpgn"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_b7wh8"]
+radius = 24.0208
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_t70kd"]
+radius = 12.0416
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ryyf3"]
+radius = 12.0
+
+[node name="Drill" type="Node2D"]
+script = ExtResource("1_pjbws")
+
+[node name="DrillA" type="Sprite2D" parent="."]
+position = Vector2(0, -48)
+scale = Vector2(3, 3)
+texture = ExtResource("1_t76pf")
+
+[node name="DrillB" type="Sprite2D" parent="."]
+position = Vector2(0, -18)
+scale = Vector2(3, 3)
+texture = ExtResource("2_a2pb7")
+
+[node name="BodyArea2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BodyArea2D"]
+position = Vector2(0, -48)
+shape = SubResource("CircleShape2D_b7wh8")
+
+[node name="LandingGearL" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LandingGearL"]
+position = Vector2(-33, 0)
+shape = SubResource("CircleShape2D_t70kd")
+
+[node name="LandingGearR" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LandingGearR"]
+position = Vector2(33, 0)
+shape = SubResource("CircleShape2D_ryyf3")
+
+[node name="Terrain_scanner" parent="." instance=ExtResource("4_txpgn")]

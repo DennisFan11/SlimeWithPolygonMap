@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://blnwdifww66cs"]
+[gd_scene load_steps=7 format=3 uid="uid://blnwdifww66cs"]
 
 [ext_resource type="PackedScene" uid="uid://1uq0nql67i3x" path="res://map_node/map_node.tscn" id="1_cuc1h"]
 [ext_resource type="Script" path="res://main/main_game.gd" id="1_dwdkl"]
 [ext_resource type="PackedScene" uid="uid://cxemlhfmq0jvp" path="res://game/player/player.tscn" id="3_wge3u"]
 [ext_resource type="Script" path="res://Class/component/FPS.gd" id="4_p68nx"]
+[ext_resource type="Texture2D" uid="uid://dmmmsoxbwg61c" path="res://main/slimedustry_pre-alpha_5m x 5m.png" id="6_6g8qs"]
+[ext_resource type="PackedScene" uid="uid://cognosnyikmr2" path="res://UI/ui.tscn" id="7_ffds6"]
 
 [node name="Main_game" type="Node2D"]
 script = ExtResource("1_dwdkl")
@@ -17,6 +19,14 @@ offset_right = 102.0
 offset_bottom = 68.0
 text = "awdwd"
 script = ExtResource("4_p68nx")
+
+[node name="UI" parent="CanvasLayer" instance=ExtResource("7_ffds6")]
+
+[node name="background" type="Polygon2D" parent="."]
+texture_filter = 6
+texture_repeat = 2
+texture = ExtResource("6_6g8qs")
+polygon = PackedVector2Array(-15058, -10637, 33649, -10455, 37706, 26704, -15442, 26686)
 
 [node name="Map_node" parent="." instance=ExtResource("1_cuc1h")]
 

@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://cg0d6ps7fgiun"]
+[gd_scene load_steps=3 format=3 uid="uid://cg0d6ps7fgiun"]
 
 [ext_resource type="Script" path="res://game/weapon/TerrainEditer/terrain_editer.gd" id="1_5xwcl"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2lc4r"]
+radius = 1.0
 
 [node name="TerrainEditer" type="Node2D"]
 script = ExtResource("1_5xwcl")
@@ -10,6 +13,11 @@ unique_name_in_owner = true
 
 [node name="Colli" type="CollisionPolygon2D" parent="Area"]
 unique_name_in_owner = true
+
+[node name="Selector" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Selector"]
+shape = SubResource("CircleShape2D_2lc4r")
 
 [node name="Label" type="Label" parent="."]
 offset_right = 40.0

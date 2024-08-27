@@ -1,5 +1,8 @@
 extends Node2D
 
+var Center:Vector2
+var Polygon:PackedVector2Array
+var CurvedPolygon:PackedVector2Array = []
 
 func _sort_points(array:Array)->PackedVector2Array: # 計算順時針多邊形
 	"""
@@ -11,75 +14,91 @@ func _sort_points(array:Array)->PackedVector2Array: # 計算順時針多邊形
 		cp+=i
 	cp/=array.size()
 	var center_angle_sort = func(A:Vector2,B:Vector2) -> bool: # 中心最大角度排序 lambda (順時鐘)
-		var Aang:float = (A-cp).angle()
-		var Bang:float = (B-cp).angle()
-		return Aang >= Bang
+		if (A-cp).angle()>=(B-cp).angle():
+			return false
+		return true
 	array.sort_custom(center_angle_sort)# (順時鐘排序)
 	return PackedVector2Array(array)
 
 
+
+const POINT_SIZE = 30 #30
+const R = 50
 var scene = preload("res://game/procedural_animation/slime/slime_body/slime_body.tscn")
-var points = []
+var point_instans:Array[SlimePoint] = []
+
 func _ready():
-	const POINT_SIZE = 30 #30
-	const R = 50
 	for i in range(POINT_SIZE):
 		var node := scene.instantiate()
-		points.append(node)
+		point_instans.append(node)
 		$Node.add_child(node)
-		var angle = PI*2 / POINT_SIZE * i
+		var angle:float = PI*2 / POINT_SIZE * i
 		
 		node.position = to_global(Vector2(cos(angle)*R, sin(angle)*R))
 		node.origin = Vector2(cos(angle)*R, sin(angle)*R)
 		
-var k = 3.5 #2 or 4
-var d = 0.90
-var spread = 0.35 # 0.2
-var passes = 3 # 5
-func _process(delta):
+const k = 3.5 #2 or 4
+const d = 0.90
+func _physics_process(delta):
 	
-	var polygon = []
-	for i in points:
+	var center:Vector2 = Vector2.ZERO
+	var polygon:PackedVector2Array = []
+	var curved_polygon:PackedVector2Array = []
+	
+	for i:SlimePoint in point_instans:
 		i.fixed_origin = to_global(i.origin)
 		i.center = global_position
 		i.slime_update(k, d)
-		polygon.append(i.global_position)
+		
+		var point := to_local(i.global_position)
+		center+= point
+		polygon.append(point)
+		
+	center/=polygon.size() # 算出中心點
 	
-	polygon = _sort_points(polygon)
+	polygon = _sort_points(polygon) # 極座標排序
+	
 	var curve = Curve2D.new()
 	for i in polygon:
 		curve.add_point(i)
+	$Node/SmoothPath.curve = curve 
+	$Node/SmoothPath.smooth(true)
+	curved_polygon = curve.get_baked_points() # 平滑曲線
 	
-	$Node/Polygon2D.polygon = curve.get_baked_points()
+	CurvedPolygon = curved_polygon
+	Polygon = polygon
+	Center = center
 	
-#region 動力傳播
+	
+	
+	_wave()
+
+
+const spread = 0.5 # 0.2 0.35 0.1
+const passes = 3 # 5 3 	
+func _wave():
 	for p in range(passes):
 		var new_delta = []
-		for i in range(points.size()):
+		for i in range(point_instans.size()):
 			new_delta.append(0)
 		var min_delta = []
-		for i in range(points.size()):
+		for i in range(point_instans.size()):
 			min_delta.append(0)
 		
-		for i in range(points.size()):
-			if i != points.size()-1:
-				new_delta[i+1] += (spread * (points[i].get_height() - points[i+1].get_height()))
-				min_delta[i] += (spread * (points[i].get_height() - points[i+1].get_height()))
-				new_delta[i-1] += (spread * (points[i].get_height() - points[i-1].get_height()))
-				min_delta[i] += (spread * (points[i].get_height() - points[i-1].get_height()))
+		for i in range(point_instans.size()):
+			if i != point_instans.size()-1:
+				new_delta[i+1] += (spread * (point_instans[i].get_height() - point_instans[i+1].get_height()))
+				min_delta[i] += (spread * (point_instans[i].get_height() - point_instans[i+1].get_height()))
+				new_delta[i-1] += (spread * (point_instans[i].get_height() - point_instans[i-1].get_height()))
+				min_delta[i] += (spread * (point_instans[i].get_height() - point_instans[i-1].get_height()))
 			else: #最後一個
-				new_delta[0] += (spread * (points[i].get_height() - points[0].get_height()))
-				min_delta[i] += (spread * (points[i].get_height() - points[0].get_height()))
-				new_delta[i-1] += (spread * (points[i].get_height() - points[i-1].get_height()))
-				min_delta[i] += (spread * (points[i].get_height() - points[i-1].get_height()))
+				new_delta[0] += (spread * (point_instans[i].get_height() - point_instans[0].get_height()))
+				min_delta[i] += (spread * (point_instans[i].get_height() - point_instans[0].get_height()))
+				new_delta[i-1] += (spread * (point_instans[i].get_height() - point_instans[i-1].get_height()))
+				min_delta[i] += (spread * (point_instans[i].get_height() - point_instans[i-1].get_height()))
 		
-		for i in range(points.size()):
-			points[i].set_height(new_delta[i] - min_delta[i])
-#endregion
-		
-	
-	
-	
+		for i in range(point_instans.size()):
+			point_instans[i].set_height(new_delta[i] - min_delta[i])
 	
 	
 	

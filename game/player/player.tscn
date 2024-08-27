@@ -1,13 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://cxemlhfmq0jvp"]
+[gd_scene load_steps=8 format=3 uid="uid://cxemlhfmq0jvp"]
 
-[ext_resource type="Texture2D" uid="uid://dhm50hbqqquxw" path="res://icon.svg" id="1_lchmj"]
 [ext_resource type="Script" path="res://game/player/player.gd" id="1_w7ejd"]
+[ext_resource type="Texture2D" uid="uid://dnwc4ilr3y8oi" path="res://game/player/NormalSlime.png" id="2_3wxi2"]
 [ext_resource type="PackedScene" uid="uid://cg0d6ps7fgiun" path="res://game/weapon/TerrainEditer/terrain_editer.tscn" id="3_aswws"]
+[ext_resource type="Script" path="res://game/player/hands.gd" id="3_eiq83"]
 [ext_resource type="PackedScene" uid="uid://bcm6kqgqyclg4" path="res://game/procedural_animation/slime/slime.tscn" id="4_svwnr"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2qnhf"]
-radius = 21.0
-height = 42.0
+radius = 15.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4al0p"]
 
 [node name="Player" type="Node2D"]
 script = ExtResource("1_w7ejd")
@@ -17,19 +19,40 @@ collision_layer = 0
 floor_stop_on_slope = false
 floor_max_angle = 1.0472
 
-[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
-visible = false
-position = Vector2(9.53674e-07, 0)
-scale = Vector2(0.34375, 0.34375)
-texture = ExtResource("1_lchmj")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
 shape = SubResource("CapsuleShape2D_2qnhf")
 
+[node name="Body" type="Node2D" parent="CharacterBody2D"]
+
+[node name="SlimeSkin" type="Polygon2D" parent="CharacterBody2D/Body"]
+color = Color(0.156863, 1, 0.231373, 0.478431)
+antialiased = true
+polygon = PackedVector2Array(50, 0, 35, -34, 0, -50, -35, -34, -50, 0, -38, 32, 0, 50, 35, 34)
+
+[node name="SlimeBoard" type="Line2D" parent="CharacterBody2D/Body"]
+points = PackedVector2Array(50, 0, 35, -34, 0, -50, -35, -34, -50, 0, -38, 32, 0, 50, 35, 34)
+closed = true
+width = 3.0
+
+[node name="SlimeFace" type="Sprite2D" parent="CharacterBody2D/Body"]
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("2_3wxi2")
+
+[node name="Hands" type="Node2D" parent="CharacterBody2D/Body"]
+script = ExtResource("3_eiq83")
+
+[node name="Line2D" type="Line2D" parent="CharacterBody2D/Body/Hands"]
+material = SubResource("ShaderMaterial_4al0p")
+width = 3.0
+
+[node name="Polygon2D" type="Polygon2D" parent="CharacterBody2D/Body/Hands"]
+color = Color(0.156863, 1, 0.231373, 0.478431)
+antialiased = true
+
 [node name="Camera2D" type="Camera2D" parent="CharacterBody2D"]
 
-[node name="test_tools" type="Node2D" parent="CharacterBody2D"]
+[node name="components" type="Node2D" parent="CharacterBody2D"]
 
-[node name="slime" parent="CharacterBody2D/test_tools" instance=ExtResource("4_svwnr")]
+[node name="slime" parent="CharacterBody2D/components" instance=ExtResource("4_svwnr")]
 
-[node name="TerrainEditer" parent="CharacterBody2D/test_tools" instance=ExtResource("3_aswws")]
+[node name="TerrainEditer" parent="CharacterBody2D/components" instance=ExtResource("3_aswws")]

@@ -3,7 +3,7 @@ extends Node2D
 @onready var viewport:SubViewport = $SubViewportContainer/SubViewport
 @onready var camera:Camera2D = $SubViewportContainer/SubViewport/Camera2D
 
-var Resolution:int = 300 : #pix
+var Resolution:int = 100 : #pix
 	set(new):
 		Resolution = new
 		_world_update()
@@ -29,19 +29,19 @@ func _world_update()->void :
 	world.position = vec / 2
 	world.scale = vec / 512.0
 	
-enum {IORN, COPPER, LUMIUM, STONE, COAL}
+enum {COPPER, IORN, COAL, ROCK, LUMIUM, BIOMASS}
 const colors = {
 	IORN: Color("7f7f7f"),
 	COPPER: Color("ae5e3e"),
 	LUMIUM: Color("0c8599"),
-	STONE: Color("846358"),
+	ROCK: Color("846358"),
 	COAL: Color("191919")
 }
 func _set_color():
 	world.material.set_shader_parameter("Iorn", colors[IORN])
 	world.material.set_shader_parameter("Copper", colors[COPPER])
 	world.material.set_shader_parameter("Lumium", colors[LUMIUM])
-	world.material.set_shader_parameter("Stone", colors[STONE])
+	world.material.set_shader_parameter("Stone", colors[ROCK])
 	world.material.set_shader_parameter("Coal", colors[COAL])
 
 func _ready():
