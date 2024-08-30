@@ -13,7 +13,10 @@ var id
 func set_polygon(polygon:PackedVector2Array)-> void:
 	%Collision.set_deferred("polygon", polygon)
 	%Polygon.set_deferred("polygon", polygon)
+	$StaticBody2D/LightOccluder2D/Polygon2D.polygon = polygon
+	$StaticBody2D/LightOccluder2D.occluder.polygon = polygon
 	$StaticBody2D/test_line.points = polygon
+	
 	var point = Vector2.ZERO
 	for i in polygon:
 		point += i
@@ -136,9 +139,9 @@ var scene = preload("res://map_node/block/block.tscn")
 
 func _fixed_polygon(polygon_points, origin): # 頂點優化
 	
-	const merge_distance = 10.0
-	const iterations = 20
-	const angle_threshold = 10.0
+	const merge_distance = 10.0 # 10
+	const iterations = 5 #20
+	const angle_threshold = 10.0 # 10 30
 	var cut_edges = _get_cut_indices(polygon_points, origin)
 	polygon_points = _merge_nearby_cut_edges(polygon_points, cut_edges, merge_distance)
 	polygon_points = _smooth_cut_edges(polygon_points, cut_edges, iterations)
@@ -212,7 +215,7 @@ func clip(global_polygon:PackedVector2Array)-> float:
 	var merged:Array[PackedVector2Array] = []
 	for i in range(cliped.size()):# 全體優化
 		var polygon = _fixed_polygon(cliped[i], origin)
-		if Geometry2D.is_polygon_clockwise(polygon):
+		if Geometry2D.is_polygon_clockwise(polygon) and i!= 0 :
 			merged[i-1] = connect_hole_with_algorithm(merged[i-1], polygon)
 			continue
 		merged.append(polygon)
@@ -236,6 +239,7 @@ func clip(global_polygon:PackedVector2Array)-> float:
 		area += calculate_polygon_area(i)
 	return area
 	
+
 
 func merge(global_polygon:PackedVector2Array):
 	var origin = _get_global_polygon($StaticBody2D/test_line.points)
@@ -332,6 +336,53 @@ func split():
 		polygon = save[0]
 	set_polygon(_get_local_polygon(polygon)) # 頂點優化, 轉換至本地
 	
+func after_optimize_clip(global_polygon:PackedVector2Array)-> float:
+	var origin = _get_global_polygon(%Collision.polygon)
+	if last_origin.size() == 0:
+		last_origin = origin
+	var cliped = Geometry2D.clip_polygons(origin, global_polygon)
+	if cliped.size() == 0:
+		queue_free()
+		return 0.0
+	
+	var merged:Array[PackedVector2Array] = []
+	for i in range(cliped.size()):# 全體優化
+		var polygon = cliped[i]
+		if Geometry2D.is_polygon_clockwise(polygon) and i!= 0 :
+			merged[i-1] = connect_hole_with_algorithm(merged[i-1], polygon)
+			continue
+		merged.append(polygon)
+	
+	var poly = merged.pop_front()
+	set_polygon(_get_local_polygon(poly)) # 頂點優化, 轉換至本地
+	for cpoly:PackedVector2Array in merged: # 多邊形分裂
+		var node = scene.instantiate()
+		get_parent().add_child(node)
+		node.set_polygon(_get_local_polygon(cpoly)) # 頂點優化, 轉換至本地
+		
+		node.set_pos(position)
+		node.set_type(id)
+	# 面積計算
+	var area:float = 0.0
+	var inter_polygons = Geometry2D.intersect_polygons(origin, global_polygon)
+	for i in inter_polygons:
+		area += calculate_polygon_area(i)
+	$SelfOptimizeTimer.start(1.0)
+	return area
 
+var last_origin = []
+func self_optimize():
+	if last_origin.size() == 0:
+		return
+	set_polygon(_get_local_polygon(_fixed_polygon(get_polygon(), last_origin)))
+	last_origin = PackedVector2Array()
+	
+	
+	
+	
 func _on_timer_timeout():
 	split()
+
+
+func _on_self_optimize_timer_timeout():
+	self_optimize()

@@ -19,6 +19,15 @@ unique_name_in_owner = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Selector"]
 shape = SubResource("CircleShape2D_2lc4r")
 
+[node name="Node" type="Node" parent="."]
+
+[node name="LineArea" type="Area2D" parent="Node"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Node/LineArea"]
+
+[node name="Polygon2D" type="Polygon2D" parent="Node"]
+color = Color(1, 1, 1, 0.584314)
+
 [node name="Label" type="Label" parent="."]
 offset_right = 40.0
 offset_bottom = 23.0

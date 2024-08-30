@@ -1,0 +1,56 @@
+[gd_scene load_steps=7 format=3 uid="uid://b5cnrcee1rpmk"]
+
+[ext_resource type="Texture2D" uid="uid://dhm50hbqqquxw" path="res://icon.svg" id="1_1s17h"]
+[ext_resource type="Shader" path="res://game/player/player.gdshader" id="2_dbh0b"]
+[ext_resource type="Shader" path="res://game/player/player_body_shadow.gdshader" id="3_gahvo"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wj2nx"]
+shader = ExtResource("2_dbh0b")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bepy3"]
+shader = ExtResource("2_dbh0b")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ysyah"]
+shader = ExtResource("3_gahvo")
+shader_parameter/offset = 20.18
+shader_parameter/angle = 10.52
+shader_parameter/ma = 20
+
+[node name="Icon" type="Node2D"]
+position = Vector2(11, 19)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 374.0
+offset_bottom = 397.0
+
+[node name="Icon2" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_wj2nx")
+position = Vector2(402, 295)
+texture = ExtResource("1_1s17h")
+
+[node name="Icon1" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_bepy3")
+position = Vector2(339, 231)
+texture = ExtResource("1_1s17h")
+
+[node name="CanvasGroup" type="CanvasGroup" parent="."]
+material = SubResource("ShaderMaterial_ysyah")
+fit_margin = 200.0
+clear_margin = 200.0
+
+[node name="Icon" type="Sprite2D" parent="CanvasGroup"]
+self_modulate = Color(1, 1, 1, 0.552941)
+position = Vector2(887, 344)
+texture = ExtResource("1_1s17h")
+
+[node name="Icon" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.552941)
+position = Vector2(751, 343)
+texture = ExtResource("1_1s17h")
+
+[node name="CanvasGroup2" type="CanvasGroup" parent="."]
+
+[node name="Icon3" type="Sprite2D" parent="CanvasGroup2"]
+modulate = Color(1, 1, 1, 0.552941)
+position = Vector2(828, 215)
+texture = ExtResource("1_1s17h")

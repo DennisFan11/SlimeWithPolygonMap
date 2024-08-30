@@ -5,7 +5,8 @@ extends Node2D
 func _ready(): 
 	Global.MainGame = self
 	Global.MapNode = $Map_node
-
+	Global.ParticleNode = $Particle_node
+	Global.ToolNode = $ToolNode
 
 
 
@@ -18,7 +19,7 @@ func _process(delta):
 		%camera.position += Input.get_vector("a", "d", "w", "s")*delta*600
 var on:bool = false
 @onready var player_camera := get_viewport().get_camera_2d()
-func _input(event):
+func _unhandled_input(event):
 	if event.is_action("zoom_in"):
 		%camera.zoom *= 1.05
 	elif event.is_action("zoom_out"):

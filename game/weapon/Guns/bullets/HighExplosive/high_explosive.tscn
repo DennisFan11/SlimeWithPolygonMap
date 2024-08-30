@@ -1,0 +1,48 @@
+[gd_scene load_steps=8 format=3 uid="uid://b5i6ce1eemq2y"]
+
+[ext_resource type="Shader" path="res://game/weapon/Guns/bullets/HighExplosive/high_explosive.gdshader" id="1_l76kd"]
+[ext_resource type="Script" path="res://game/weapon/Guns/bullets/HighExplosive/high_explosive.gd" id="1_xew12"]
+
+[sub_resource type="Curve" id="Curve_hxwn7"]
+_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_4q4ew"]
+curve = SubResource("Curve_hxwn7")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o14bd"]
+shader = ExtResource("1_l76kd")
+shader_parameter/curve = SubResource("CurveTexture_4q4ew")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ujvbu"]
+radius = 1.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dfhi7"]
+radius = 5.0
+
+[node name="HighExplosive" type="CharacterBody2D"]
+collision_layer = 0
+script = ExtResource("1_xew12")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_o14bd")
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+color = Color(1, 1, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ujvbu")
+
+[node name="colli_scan" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="colli_scan"]
+shape = SubResource("CircleShape2D_dfhi7")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 10.0
+autostart = true
+
+[connection signal="body_entered" from="colli_scan" to="." method="_on_colli_scan_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

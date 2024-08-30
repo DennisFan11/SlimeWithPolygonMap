@@ -26,11 +26,11 @@ func set_height(height:float):
 ## 设置目标高度
 #func set_height(height):
 	#velocity += height
-
+var max_length = 70.0
 func slime_update(spring_constant, damping):
 	var force = spring_constant * (fixed_origin - global_position)
 	velocity += force
 	velocity *= damping  # 加入阻尼
 	move_and_slide()
-	if (fixed_origin - global_position).length() >= 70:
+	if (fixed_origin - global_position).length() >= max_length:
 		global_position = center#fixed_origin

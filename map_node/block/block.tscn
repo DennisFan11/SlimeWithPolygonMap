@@ -1,6 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://bi8vhddutn6p4"]
+[gd_scene load_steps=4 format=3 uid="uid://bi8vhddutn6p4"]
 
 [ext_resource type="Script" path="res://map_node/block/block.gd" id="1_h1t5x"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_1ytac"]
+resource_local_to_scene = true
+polygon = PackedVector2Array(-150, -150, 149, -150, 154, 153, -143, 148)
 
 [sub_resource type="Gradient" id="Gradient_nj0hs"]
 colors = PackedColorArray(1, 0, 0, 1, 1, 1, 0, 1)
@@ -10,6 +14,11 @@ script = ExtResource("1_h1t5x")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." groups=["Block"]]
 
+[node name="LightOccluder2D" type="LightOccluder2D" parent="StaticBody2D"]
+occluder = SubResource("OccluderPolygon2D_1ytac")
+
+[node name="Polygon2D" type="Polygon2D" parent="StaticBody2D/LightOccluder2D"]
+
 [node name="Polygon" type="Polygon2D" parent="StaticBody2D"]
 unique_name_in_owner = true
 
@@ -17,6 +26,7 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 
 [node name="test_line" type="Line2D" parent="StaticBody2D"]
+visible = false
 closed = true
 width = 3.0
 gradient = SubResource("Gradient_nj0hs")
@@ -29,6 +39,7 @@ text = "vertex"
 
 [node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
 rect = Rect2(-150, -150, 300, 300)
+enable_node_path = NodePath("")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 visible = false
@@ -38,4 +49,8 @@ offset_bottom = 40.0
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
 
+[node name="SelfOptimizeTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="timeout" from="SelfOptimizeTimer" to="." method="_on_self_optimize_timer_timeout"]

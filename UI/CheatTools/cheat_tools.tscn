@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://cs156esemda8n"]
+[gd_scene load_steps=2 format=3 uid="uid://cs156esemda8n"]
+
+[ext_resource type="Script" path="res://UI/CheatTools/terrain.gd" id="1_wciek"]
 
 [node name="CheatTools" type="Control"]
 layout_mode = 3
@@ -25,12 +27,16 @@ tabs_position = 1
 
 [node name="Terrain" type="Control" parent="TabContainer"]
 layout_mode = 2
+script = ExtResource("1_wciek")
 metadata/_tab_index = 0
+
+[node name="Node" type="Node" parent="TabContainer/Terrain"]
 
 [node name="Circle" type="Button" parent="TabContainer/Terrain"]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
+focus_mode = 0
 text = "Circle"
 
 [node name="Square" type="Button" parent="TabContainer/Terrain"]
@@ -38,6 +44,7 @@ layout_mode = 0
 offset_left = 53.0
 offset_right = 116.0
 offset_bottom = 31.0
+focus_mode = 0
 text = "Square"
 
 [node name="Line" type="CheckButton" parent="TabContainer/Terrain"]
@@ -46,6 +53,7 @@ offset_left = -2.0
 offset_top = 28.0
 offset_right = 79.0
 offset_bottom = 59.0
+focus_mode = 0
 text = "Line"
 
 [node name="Expand" type="CheckButton" parent="TabContainer/Terrain"]
@@ -54,10 +62,38 @@ offset_left = -1.0
 offset_top = 55.0
 offset_right = 105.0
 offset_bottom = 86.0
+focus_mode = 0
 text = "Expand
 "
+
+[node name="ID" type="SpinBox" parent="TabContainer/Terrain"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 83.0
+offset_right = 88.0625
+offset_bottom = 114.0
+prefix = "ID ="
+
+[node name="R" type="SpinBox" parent="TabContainer/Terrain"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 117.0
+offset_right = 88.0625
+offset_bottom = 148.0
+max_value = 1000.0
+value = 70.0
+prefix = "R = "
 
 [node name="Item" type="ItemList" parent="TabContainer"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
+
+[connection signal="button_down" from="TabContainer/Terrain/Circle" to="TabContainer/Terrain" method="_on_circle_button_down"]
+[connection signal="pressed" from="TabContainer/Terrain/Circle" to="TabContainer/Terrain" method="_on_circle_pressed"]
+[connection signal="button_down" from="TabContainer/Terrain/Square" to="TabContainer/Terrain" method="_on_square_button_down"]
+[connection signal="pressed" from="TabContainer/Terrain/Square" to="TabContainer/Terrain" method="_on_square_pressed"]
+[connection signal="toggled" from="TabContainer/Terrain/Line" to="TabContainer/Terrain" method="_on_line_toggled"]
+[connection signal="toggled" from="TabContainer/Terrain/Expand" to="TabContainer/Terrain" method="_on_expand_toggled"]
+[connection signal="value_changed" from="TabContainer/Terrain/ID" to="TabContainer/Terrain" method="_on_id_value_changed"]
+[connection signal="value_changed" from="TabContainer/Terrain/R" to="TabContainer/Terrain" method="_on_r_value_changed"]

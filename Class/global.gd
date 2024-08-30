@@ -1,8 +1,8 @@
 extends Node
 var MainGame:Main_game
 var MapNode:Map_node
-
-
+var ParticleNode:Particle_node
+var ToolNode:Node2D
 
 
 

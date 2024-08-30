@@ -76,7 +76,7 @@ func _physics_process(delta):
 
 const spread = 0.5 # 0.2 0.35 0.1
 const passes = 3 # 5 3 	
-func _wave():
+func _wave(): # 動量分散
 	for p in range(passes):
 		var new_delta = []
 		for i in range(point_instans.size()):
@@ -100,8 +100,16 @@ func _wave():
 		for i in range(point_instans.size()):
 			point_instans[i].set_height(new_delta[i] - min_delta[i])
 	
-	
-	
+
+func Splash(global_pos:Vector2, vec:Vector2):
+	var copy = point_instans.duplicate(false)
+	var dist_sort = func(A:SlimePoint,B:SlimePoint):
+		if (A.global_position-global_pos).length()< (B.global_position-global_pos).length():
+			return true
+		return false
+	copy.sort_custom(dist_sort)
+	for i in range(3):
+		copy[i].global_position += vec
 	
 	
 	

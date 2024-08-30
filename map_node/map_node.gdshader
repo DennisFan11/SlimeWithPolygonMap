@@ -11,7 +11,7 @@ void vertex(){
 
 void fragment() {
 	const float BLOCK_SIZE = 8.; // 3.0
-	const float SAMP_R = 5.; // 5
+	const float SAMP_R = 5.; // 5 10
 
 	float tot = 0.0;
 	float count = 0.0;
