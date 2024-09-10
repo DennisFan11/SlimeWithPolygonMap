@@ -4,7 +4,9 @@ var MapNode:Map_node
 var ParticleNode:Particle_node
 var ToolNode:Node2D
 
+var GravityCenter:Vector2 = Vector2.ZERO
 
+var PlayerPosition:Vector2 = Vector2.ZERO
 
 
 enum {COPPER, IORN, COAL, ROCK, LUMIUM, BIOMASS}

@@ -1,11 +1,19 @@
-[gd_scene load_steps=6 format=3 uid="uid://1uq0nql67i3x"]
+[gd_scene load_steps=7 format=3 uid="uid://1uq0nql67i3x"]
 
 [ext_resource type="Script" path="res://map_node/map_node.gd" id="1_lmily"]
 [ext_resource type="Shader" path="res://map_node/map_node.gdshader" id="2_no47x"]
 
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_5y6o4"]
+vertices = PackedVector2Array(30959.9, 26527.5, -9613.95, 24760.5, -6650.96, -3900.13, 27883, -4412.86)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-6660, -3910, 27892, -4423, 30971, 26538, -9625, 24770)])
+cell_size = 20.0
+agent_radius = 20.0
+baking_rect = Rect2(-200, -200, 20000, 20000)
+
 [sub_resource type="Curve" id="Curve_qyl5w"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.454183, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 3
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.254335, 0.538462), 0.0, 0.0, 0, 0, Vector2(0.387283, 1), 0.0, 0.0, 0, 0, Vector2(0.49711, 1), 0.0, 0.0, 0, 0, Vector2(0.612717, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 6
 
 [sub_resource type="CurveTexture" id="CurveTexture_six0b"]
 curve = SubResource("Curve_qyl5w")
@@ -17,6 +25,13 @@ shader_parameter/curve_texture = SubResource("CurveTexture_six0b")
 [node name="Map_node" type="Node2D"]
 script = ExtResource("1_lmily")
 
-[node name="CanvasGroup" type="CanvasGroup" parent="."]
+[node name="Building" type="Node2D" parent="."]
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_5y6o4")
+
+[node name="CanvasGroup" type="CanvasGroup" parent="NavigationRegion2D"]
 material = SubResource("ShaderMaterial_7jfso")
 use_mipmaps = true
+
+[connection signal="bake_finished" from="NavigationRegion2D" to="." method="_on_navigation_region_2d_bake_finished"]

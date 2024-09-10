@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://cxemlhfmq0jvp"]
+[gd_scene load_steps=9 format=3 uid="uid://cxemlhfmq0jvp"]
 
 [ext_resource type="Script" path="res://game/player/player.gd" id="1_w7ejd"]
 [ext_resource type="Texture2D" uid="uid://dnwc4ilr3y8oi" path="res://game/player/NormalSlime.png" id="2_3wxi2"]
 [ext_resource type="Script" path="res://game/player/hands.gd" id="3_eiq83"]
 [ext_resource type="PackedScene" uid="uid://bkj0yw1sxxihh" path="res://game/weapon/Guns/Shotgun/Shotgun.tscn" id="4_cgf8e"]
 [ext_resource type="PackedScene" uid="uid://bcm6kqgqyclg4" path="res://game/procedural_animation/slime/slime.tscn" id="4_svwnr"]
+[ext_resource type="Script" path="res://game/player/smooth_move.gd" id="5_hl2ui"]
 [ext_resource type="Texture2D" uid="uid://bvkhq72ytbp1m" path="res://game/player/2d_lights_and_shadows_neutral_point_light.webp" id="6_beqa5"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2qnhf"]
@@ -51,7 +52,7 @@ script = ExtResource("3_eiq83")
 
 [node name="Line2D" type="Line2D" parent="CharacterBody2D/Body/Hands"]
 visible = false
-points = PackedVector2Array(-51, -7, -25, -7, 3, -7, 6, -5, 7, -1, 0, 6, -9, 10, -26, 15, -49, 21)
+points = PackedVector2Array(-63, -7, -51, -7, -25, -7, 3, -7, 6, -5, 7, -1, 0, 6, -9, 10, -26, 15, -49, 21, -61, 24)
 width = 3.0
 
 [node name="remove" type="Line2D" parent="CharacterBody2D/Body/Hands"]
@@ -74,6 +75,21 @@ offset_bottom = 1.0
 position = Vector2(75, -8)
 
 [node name="Camera2D" type="Camera2D" parent="CharacterBody2D/Equipments/Unbind"]
+ignore_rotation = false
+
+[node name="Smooth_move" type="Node2D" parent="CharacterBody2D/Equipments"]
+script = ExtResource("5_hl2ui")
+
+[node name="remove" type="Area2D" parent="CharacterBody2D/Equipments/Smooth_move"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="CharacterBody2D/Equipments/Smooth_move/remove"]
+modulate = Color(0, 1, 0, 1)
+polygon = PackedVector2Array(-18, 0, -17, 4, -15, 7, -11, 12, -5, 14, 0, 15, 5, 14, 11, 12, 15, 7, 17, 4, 18, 0, 18, -21, -18, -21)
+
+[node name="scanner" type="Area2D" parent="CharacterBody2D/Equipments/Smooth_move"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="CharacterBody2D/Equipments/Smooth_move/scanner"]
+polygon = PackedVector2Array(-18, -21, 18, -21, 18, -27, -18, -27)
 
 [node name="components" type="Node2D" parent="CharacterBody2D"]
 

@@ -34,7 +34,7 @@ func _ready():
 		$Node.add_child(node)
 		var angle:float = PI*2 / POINT_SIZE * i
 		
-		node.position = to_global(Vector2(cos(angle)*R, sin(angle)*R))
+		node.position = to_global(Vector2(cos(angle)*R, sin(angle)*R))#0.85
 		node.origin = Vector2(cos(angle)*R, sin(angle)*R)
 		
 const k = 3.5 #2 or 4
@@ -69,12 +69,10 @@ func _physics_process(delta):
 	Polygon = polygon
 	Center = center
 	
-	
-	
 	_wave()
 
 
-const spread = 0.5 # 0.2 0.35 0.1
+const spread = 0.7 # 0.5
 const passes = 3 # 5 3 	
 func _wave(): # 動量分散
 	for p in range(passes):

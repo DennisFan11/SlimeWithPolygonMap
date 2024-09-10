@@ -1,16 +1,27 @@
-[gd_scene load_steps=5 format=3 uid="uid://p612bdjul2ey"]
+[gd_scene load_steps=13 format=3 uid="uid://p612bdjul2ey"]
 
 [ext_resource type="Script" path="res://Tools/Map_gen/map_gen.gd" id="1_fqmn4"]
-[ext_resource type="Shader" uid="uid://capchccxte6v0" path="res://Tools/Map_gen/map_gen.tres" id="2_6gji7"]
+[ext_resource type="Shader" uid="uid://m3slfevso4pl" path="res://Tools/Map_gen/gen_dirt.tres" id="2_h2ioo"]
 [ext_resource type="Texture2D" uid="uid://bckctufbjkns6" path="res://Tools/Map_gen/Sprite-0001.png" id="3_jt1jw"]
+[ext_resource type="Shader" uid="uid://ccwh83ip4lr4b" path="res://Tools/Map_gen/gen_stone.tres" id="4_usuau"]
+[ext_resource type="Shader" uid="uid://b5k5o87cgesgs" path="res://Tools/Map_gen/gen_copper.tres" id="5_by0f3"]
+[ext_resource type="Shader" uid="uid://csyk517uycrjd" path="res://Tools/Map_gen/gen_iorn.tres" id="6_vedwe"]
+[ext_resource type="Shader" uid="uid://bcqxjhpgsu3vu" path="res://Tools/Map_gen/gen_coal.tres" id="7_ptssa"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kr16r"]
-shader = ExtResource("2_6gji7")
-shader_parameter/Stone = Vector3(0.518, 0.388, 0.345)
-shader_parameter/Iorn = Vector3(0.5, 0.5, 0.5)
-shader_parameter/Copper = Vector3(0.682, 0.369, 0.243)
-shader_parameter/Lumium = Vector3(0.047, 0.522, 0.6)
-shader_parameter/Coal = Vector3(0.1, 0.1, 0.1)
+shader = ExtResource("2_h2ioo")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xq8m6"]
+shader = ExtResource("4_usuau")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_16ve6"]
+shader = ExtResource("5_by0f3")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ipjlr"]
+shader = ExtResource("6_vedwe")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e2b8q"]
+shader = ExtResource("7_ptssa")
 
 [node name="Map_gen" type="Node2D"]
 script = ExtResource("1_fqmn4")
@@ -41,8 +52,28 @@ snap_2d_vertices_to_pixel = true
 canvas_item_default_texture_filter = 0
 render_target_update_mode = 4
 
-[node name="world" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+[node name="Dirt" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
 material = SubResource("ShaderMaterial_kr16r")
+position = Vector2(256, 256)
+texture = ExtResource("3_jt1jw")
+
+[node name="Stone" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+material = SubResource("ShaderMaterial_xq8m6")
+position = Vector2(256, 256)
+texture = ExtResource("3_jt1jw")
+
+[node name="Copper" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+material = SubResource("ShaderMaterial_16ve6")
+position = Vector2(256, 256)
+texture = ExtResource("3_jt1jw")
+
+[node name="Iorn" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+material = SubResource("ShaderMaterial_ipjlr")
+position = Vector2(256, 256)
+texture = ExtResource("3_jt1jw")
+
+[node name="Coal" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+material = SubResource("ShaderMaterial_e2b8q")
 position = Vector2(256, 256)
 texture = ExtResource("3_jt1jw")
 
@@ -84,7 +115,7 @@ suffix = " pix"
 [node name="BlockSize" type="SpinBox" parent="Control/Panel/VBoxContainer"]
 layout_mode = 2
 min_value = 10.0
-max_value = 300.0
+max_value = 1e+06
 value = 10.0
 alignment = 1
 prefix = "BlockSize"

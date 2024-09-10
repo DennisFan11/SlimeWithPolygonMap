@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://d3ce4265eo715"]
+
+[ext_resource type="Texture2D" uid="uid://f4jb3yb3pxk4" path="res://map_node/building/duo_line_cannon/base.png" id="1_8iig7"]
+[ext_resource type="Script" path="res://map_node/building/duo_line_cannon/duo_line_cannon.gd" id="1_c2vwe"]
+[ext_resource type="Texture2D" uid="uid://dqt0cysbu40so" path="res://map_node/building/duo_line_cannon/duo_line_cannon.png" id="2_q14gy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vpe32"]
+radius = 7.0
+
+[node name="duo_line_cannon" type="Node2D"]
+script = ExtResource("1_c2vwe")
+
+[node name="Base" type="Sprite2D" parent="."]
+modulate = Color(0.646029, 0.646029, 0.646029, 1)
+position = Vector2(0, -15)
+scale = Vector2(3, 3)
+texture = ExtResource("1_8iig7")
+
+[node name="DuoLineCannon" type="Sprite2D" parent="."]
+position = Vector2(0, -50)
+scale = Vector2(3, 3)
+texture = ExtResource("2_q14gy")
+
+[node name="BodyArea2D" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="BodyArea2D"]
+polygon = PackedVector2Array(-21, -62, -33, -38, 33, -38, 21, -62)
+
+[node name="LandingGearL" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LandingGearL"]
+position = Vector2(24, 0)
+shape = SubResource("CircleShape2D_vpe32")
+
+[node name="LandingGearR" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LandingGearR"]
+position = Vector2(-24, 0)
+shape = SubResource("CircleShape2D_vpe32")

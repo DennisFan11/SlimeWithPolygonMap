@@ -1,0 +1,126 @@
+[gd_resource type="VisualShader" load_steps=14 format=3 uid="uid://csyk517uycrjd"]
+
+[ext_resource type="Script" path="res://addons/ShaderLib/Procedural/Shapes/Ellipse.gd" id="1_21chf"]
+[ext_resource type="Script" path="res://addons/ShaderLib/Procedural/Noise/SimpleNoise.gd" id="2_234fc"]
+[ext_resource type="Script" path="res://addons/ShaderLib/Procedural/Noise/GradientNoise.gd" id="3_ej5m0"]
+
+[sub_resource type="VisualShaderNodeVec3Constant" id="VisualShaderNodeVec3Constant_h5gd5"]
+output_port_for_preview = 0
+constant = Vector3(0.2, 0.2, 0.2)
+
+[sub_resource type="VisualShaderNodeCustom" id="VisualShaderNodeCustom_ul2ql"]
+output_port_for_preview = 0
+default_input_values = [0, null, 1, 1.0, 2, 1.0]
+initialized = true
+script = ExtResource("1_21chf")
+
+[sub_resource type="Curve" id="Curve_y54ac"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.65116, 0), 0.0, 0.0, 0, 0, Vector2(0.6692, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_mfch0"]
+curve = SubResource("Curve_y54ac")
+
+[sub_resource type="VisualShaderNodeCurveTexture" id="VisualShaderNodeCurveTexture_7v4ig"]
+output_port_for_preview = 0
+texture = SubResource("CurveTexture_mfch0")
+
+[sub_resource type="VisualShaderNodeCustom" id="VisualShaderNodeCustom_8hqa3"]
+output_port_for_preview = 0
+default_input_values = [0, null, 1, 3.0, 2, 6]
+initialized = true
+script = ExtResource("2_234fc")
+
+[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_20q06"]
+operator = 2
+
+[sub_resource type="VisualShaderNodeCustom" id="VisualShaderNodeCustom_rhe2p"]
+output_port_for_preview = 0
+default_input_values = [0, null, 1, 20.0]
+initialized = true
+script = ExtResource("3_ej5m0")
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_ehpq0"]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_1eduo"]
+default_input_values = [0, Vector2(0, 0), 1, Vector2(2, 2)]
+op_type = 0
+
+[resource]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform sampler2D curve_frg_4 : repeat_disable;
+
+
+// Ellipse
+#include \"res://addons/ShaderLib/Procedural/Procedural.gdshaderinc\"
+// GradientNoise
+#include \"res://addons/ShaderLib/Procedural/Procedural.gdshaderinc\"
+
+void fragment() {
+// Vector3Constant:2
+	vec3 n_out2p0 = vec3(0.200000, 0.200000, 0.200000);
+
+
+	float n_out3p0;
+// Ellipse:3
+	float n_in3p1 = 1.00000;
+	float n_in3p2 = 1.00000;
+	{
+		n_out3p0 = ellipse_shape(UV, n_in3p1, n_in3p2);
+	}
+
+
+// Input:8
+	vec2 n_out8p0 = UV;
+
+
+// VectorOp:9
+	vec2 n_in9p1 = vec2(2.00000, 2.00000);
+	vec2 n_out9p0 = n_out8p0 + n_in9p1;
+
+
+	float n_out7p0;
+// GradientNoise:7
+	float n_in7p1 = 20.00000;
+	{
+		n_out7p0 = gradient_noise(n_out9p0, n_in7p1);
+	}
+
+
+// CurveTexture:4
+	float n_out4p0 = texture(curve_frg_4, vec2(n_out7p0)).r;
+
+
+// FloatOp:6
+	float n_out6p0 = n_out3p0 * n_out4p0;
+
+
+// Output:0
+	COLOR.rgb = n_out2p0;
+	COLOR.a = n_out6p0;
+
+
+}
+"
+mode = 1
+flags/light_only = false
+nodes/fragment/2/node = SubResource("VisualShaderNodeVec3Constant_h5gd5")
+nodes/fragment/2/position = Vector2(-280, -320)
+nodes/fragment/3/node = SubResource("VisualShaderNodeCustom_ul2ql")
+nodes/fragment/3/position = Vector2(-180, 120)
+nodes/fragment/4/node = SubResource("VisualShaderNodeCurveTexture_7v4ig")
+nodes/fragment/4/position = Vector2(-300, 480)
+nodes/fragment/5/node = SubResource("VisualShaderNodeCustom_8hqa3")
+nodes/fragment/5/position = Vector2(-1160, 520)
+nodes/fragment/6/node = SubResource("VisualShaderNodeFloatOp_20q06")
+nodes/fragment/6/position = Vector2(120, 300)
+nodes/fragment/7/node = SubResource("VisualShaderNodeCustom_rhe2p")
+nodes/fragment/7/position = Vector2(-560, 600)
+nodes/fragment/8/node = SubResource("VisualShaderNodeInput_ehpq0")
+nodes/fragment/8/position = Vector2(-940, 500)
+nodes/fragment/9/node = SubResource("VisualShaderNodeVectorOp_1eduo")
+nodes/fragment/9/position = Vector2(-780, 620)
+nodes/fragment/connections = PackedInt32Array(2, 0, 0, 0, 3, 0, 6, 0, 6, 0, 0, 1, 4, 0, 6, 1, 7, 0, 4, 0, 8, 0, 9, 0, 9, 0, 7, 0)

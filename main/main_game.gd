@@ -7,8 +7,11 @@ func _ready():
 	Global.MapNode = $Map_node
 	Global.ParticleNode = $Particle_node
 	Global.ToolNode = $ToolNode
-
-
+	
+	
+	$test_node/Player.position.x = Global.GravityCenter.x
+	$test_node/Player.position.y = -50#10020.0
+	Global.GravityCenter.y += 999999999.0
 
 
 
@@ -16,7 +19,7 @@ func _ready():
 
 func _process(delta):
 	if on:
-		%camera.position += Input.get_vector("a", "d", "w", "s")*delta*600
+		%camera.position += Input.get_vector("left", "right", "up", "down")*delta*600
 var on:bool = false
 @onready var player_camera := get_viewport().get_camera_2d()
 func _unhandled_input(event):

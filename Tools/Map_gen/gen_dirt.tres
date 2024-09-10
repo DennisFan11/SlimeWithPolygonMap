@@ -1,0 +1,51 @@
+[gd_resource type="VisualShader" load_steps=4 format=3 uid="uid://m3slfevso4pl"]
+
+[ext_resource type="Script" path="res://addons/ShaderLib/Procedural/Shapes/Ellipse.gd" id="1_6yu5c"]
+
+[sub_resource type="VisualShaderNodeCustom" id="VisualShaderNodeCustom_dgt4y"]
+output_port_for_preview = 0
+default_input_values = [0, null, 1, 1.0, 2, 1.0]
+initialized = true
+script = ExtResource("1_6yu5c")
+
+[sub_resource type="VisualShaderNodeVec3Constant" id="VisualShaderNodeVec3Constant_8yasm"]
+output_port_for_preview = 0
+constant = Vector3(0.68, 0.36, 0.24)
+
+[resource]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+
+
+// Ellipse
+#include \"res://addons/ShaderLib/Procedural/Procedural.gdshaderinc\"
+
+void fragment() {
+// Vector3Constant:5
+	vec3 n_out5p0 = vec3(0.680000, 0.360000, 0.240000);
+
+
+	float n_out4p0;
+// Ellipse:4
+	float n_in4p1 = 1.00000;
+	float n_in4p2 = 1.00000;
+	{
+		n_out4p0 = ellipse_shape(UV, n_in4p1, n_in4p2);
+	}
+
+
+// Output:0
+	COLOR.rgb = n_out5p0;
+	COLOR.a = n_out4p0;
+
+
+}
+"
+mode = 1
+flags/light_only = false
+nodes/fragment/4/node = SubResource("VisualShaderNodeCustom_dgt4y")
+nodes/fragment/4/position = Vector2(-140, 280)
+nodes/fragment/5/node = SubResource("VisualShaderNodeVec3Constant_8yasm")
+nodes/fragment/5/position = Vector2(-300, 20)
+nodes/fragment/connections = PackedInt32Array(4, 0, 0, 1, 5, 0, 0, 0)

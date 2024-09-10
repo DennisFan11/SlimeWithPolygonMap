@@ -1,0 +1,132 @@
+[gd_resource type="VisualShader" load_steps=15 format=3 uid="uid://ccwh83ip4lr4b"]
+
+[ext_resource type="Script" path="res://addons/ShaderLib/Procedural/Shapes/Ellipse.gd" id="1_1g5s4"]
+[ext_resource type="Script" path="res://addons/ShaderLib/Procedural/Noise/Voronoi.gd" id="2_srvyf"]
+[ext_resource type="Script" path="res://addons/ShaderLib/Procedural/Noise/GradientNoise.gd" id="3_unf20"]
+[ext_resource type="Script" path="res://addons/ShaderLib/Procedural/Noise/SimpleNoise.gd" id="4_yyhiy"]
+
+[sub_resource type="VisualShaderNodeVec3Constant" id="VisualShaderNodeVec3Constant_vq6vv"]
+output_port_for_preview = 0
+constant = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="VisualShaderNodeCustom" id="VisualShaderNodeCustom_1ebfj"]
+output_port_for_preview = 0
+default_input_values = [0, null, 1, 1.0, 2, 1.0]
+initialized = true
+script = ExtResource("1_1g5s4")
+
+[sub_resource type="VisualShaderNodeCustom" id="VisualShaderNodeCustom_gs5x1"]
+output_port_for_preview = 0
+default_input_values = [0, null, 1, 5.0, 2, 2.0, 3, 2.0]
+initialized = true
+script = ExtResource("2_srvyf")
+
+[sub_resource type="VisualShaderNodeCustom" id="VisualShaderNodeCustom_w7em6"]
+output_port_for_preview = 0
+default_input_values = [0, null, 1, 20.0]
+initialized = true
+script = ExtResource("3_unf20")
+
+[sub_resource type="VisualShaderNodeCustom" id="VisualShaderNodeCustom_vm52c"]
+output_port_for_preview = 0
+default_input_values = [0, null, 1, 10.0, 2, 10]
+initialized = true
+script = ExtResource("4_yyhiy")
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_uupgp"]
+input_name = "time"
+
+[sub_resource type="Curve" id="Curve_ebkov"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.136895, 1), 0.0, 0.0, 0, 0, Vector2(0.335326, 1), 0.0, 0.0, 0, 0, Vector2(0.375374, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_hcye7"]
+curve = SubResource("Curve_ebkov")
+
+[sub_resource type="VisualShaderNodeCurveTexture" id="VisualShaderNodeCurveTexture_as2hv"]
+output_port_for_preview = 0
+texture = SubResource("CurveTexture_hcye7")
+
+[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_0vct2"]
+operator = 2
+
+[resource]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform sampler2D curve_frg_8 : repeat_disable;
+
+
+// Ellipse
+#include \"res://addons/ShaderLib/Procedural/Procedural.gdshaderinc\"
+// SimpleNoise
+#include \"res://addons/ShaderLib/Procedural/Procedural.gdshaderinc\"
+// Voronoi
+#include \"res://addons/ShaderLib/Procedural/Procedural.gdshaderinc\"
+
+void fragment() {
+// Vector3Constant:2
+	vec3 n_out2p0 = vec3(0.500000, 0.500000, 0.500000);
+
+
+	float n_out3p0;
+// Ellipse:3
+	float n_in3p1 = 1.00000;
+	float n_in3p2 = 1.00000;
+	{
+		n_out3p0 = ellipse_shape(UV, n_in3p1, n_in3p2);
+	}
+
+
+	float n_out6p0;
+// SimpleNoise:6
+	float n_in6p1 = 10.00000;
+	int n_in6p2 = 10;
+	{
+		n_out6p0 = simple_noise(UV, n_in6p1, n_in6p2);
+	}
+
+
+	float n_out4p0;
+	float n_out4p1;
+// Voronoi:4
+	float n_in4p1 = 5.00000;
+	{
+		voronoi_noise(vec2(n_out6p0), n_in4p1, n_out6p0, 0, 0., n_out4p0, n_out4p1);
+	}
+
+
+// CurveTexture:8
+	float n_out8p0 = texture(curve_frg_8, vec2(n_out4p0)).r;
+
+
+// FloatOp:9
+	float n_out9p0 = n_out3p0 * n_out8p0;
+
+
+// Output:0
+	COLOR.rgb = n_out2p0;
+	COLOR.a = n_out9p0;
+
+
+}
+"
+mode = 1
+flags/light_only = false
+nodes/fragment/2/node = SubResource("VisualShaderNodeVec3Constant_vq6vv")
+nodes/fragment/2/position = Vector2(-300, 120)
+nodes/fragment/3/node = SubResource("VisualShaderNodeCustom_1ebfj")
+nodes/fragment/3/position = Vector2(-140, 380)
+nodes/fragment/4/node = SubResource("VisualShaderNodeCustom_gs5x1")
+nodes/fragment/4/position = Vector2(-640, 580)
+nodes/fragment/5/node = SubResource("VisualShaderNodeCustom_w7em6")
+nodes/fragment/5/position = Vector2(-800, 1060)
+nodes/fragment/6/node = SubResource("VisualShaderNodeCustom_vm52c")
+nodes/fragment/6/position = Vector2(-1000, 640)
+nodes/fragment/7/node = SubResource("VisualShaderNodeInput_uupgp")
+nodes/fragment/7/position = Vector2(-1400, 640)
+nodes/fragment/8/node = SubResource("VisualShaderNodeCurveTexture_as2hv")
+nodes/fragment/8/position = Vector2(-320, 820)
+nodes/fragment/9/node = SubResource("VisualShaderNodeFloatOp_0vct2")
+nodes/fragment/9/position = Vector2(100, 640)
+nodes/fragment/connections = PackedInt32Array(2, 0, 0, 0, 8, 0, 9, 1, 3, 0, 9, 0, 9, 0, 0, 1, 6, 0, 4, 2, 4, 0, 8, 0, 6, 0, 4, 0)

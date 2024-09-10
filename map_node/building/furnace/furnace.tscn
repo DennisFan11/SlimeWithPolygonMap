@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://bffblvf82ni63"]
+
+[ext_resource type="Script" path="res://map_node/building/furnace/furnace.gd" id="1_4lhkc"]
+[ext_resource type="Texture2D" uid="uid://bl1jt737rqam" path="res://map_node/building/furnace/furnace.png" id="1_bpp5x"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_oi1yl"]
+radius = 12.0
+
+[node name="furnace" type="Node2D"]
+script = ExtResource("1_4lhkc")
+
+[node name="Furnace" type="Sprite2D" parent="."]
+position = Vector2(0, -96)
+scale = Vector2(3, 3)
+texture = ExtResource("1_bpp5x")
+
+[node name="BodyArea2D" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="BodyArea2D"]
+polygon = PackedVector2Array(-39, -9, 39, -9, 57, -24, 57, -117, 33, -129, -33, -129, -57, -117, -57, -24)
+
+[node name="LandingGearL" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LandingGearL"]
+position = Vector2(-60, 0)
+shape = SubResource("CircleShape2D_oi1yl")
+
+[node name="LandingGearR" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LandingGearR"]
+position = Vector2(60, 0)
+shape = SubResource("CircleShape2D_oi1yl")

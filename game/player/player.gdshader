@@ -7,4 +7,6 @@ void fragment() {
 	////COLOR = texture(TEXTURE, UV);
 	//COLOR.a *= a;
 	COLOR = mix(COLOR, texture(screen_texture, SCREEN_UV), 0.5);
+	COLOR.b = 0.0;
+	COLOR.rg = UV;
 }

@@ -1,0 +1,122 @@
+[gd_scene load_steps=7 format=3 uid="uid://p612bdjul2ey"]
+
+[ext_resource type="Script" path="res://Tools/Map_gen/map_gen.gd" id="1_fqmn4"]
+[ext_resource type="Shader" uid="uid://m3slfevso4pl" path="res://Tools/Map_gen/gen_dirt.tres" id="2_h2ioo"]
+[ext_resource type="Texture2D" uid="uid://bckctufbjkns6" path="res://Tools/Map_gen/Sprite-0001.png" id="3_jt1jw"]
+[ext_resource type="Shader" uid="uid://ccwh83ip4lr4b" path="res://Tools/Map_gen/gen_stone.tres" id="4_usuau"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kr16r"]
+shader = ExtResource("2_h2ioo")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xq8m6"]
+shader = ExtResource("4_usuau")
+
+[node name="Map_gen" type="Node2D"]
+script = ExtResource("1_fqmn4")
+
+[node name="Panel" type="Panel" parent="."]
+offset_left = -128.0
+offset_top = -128.0
+offset_right = 1280.0
+offset_bottom = 768.0
+size_flags_horizontal = 0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 320.0
+offset_top = 64.0
+offset_right = 832.0
+offset_bottom = 576.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+render_target_update_mode = 4
+
+[node name="Dirt" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+material = SubResource("ShaderMaterial_kr16r")
+position = Vector2(256, 256)
+texture = ExtResource("3_jt1jw")
+
+[node name="Stone" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+material = SubResource("ShaderMaterial_xq8m6")
+texture = ExtResource("3_jt1jw")
+
+[node name="Copper" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+texture = ExtResource("3_jt1jw")
+
+[node name="Iorn" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+texture = ExtResource("3_jt1jw")
+
+[node name="Coal" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+texture = ExtResource("3_jt1jw")
+
+[node name="Camera2D" type="Camera2D" parent="SubViewportContainer/SubViewport"]
+offset = Vector2(256, 256)
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 104.0
+offset_bottom = 104.0
+
+[node name="Panel" type="Panel" parent="Control"]
+layout_mode = 0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 134.0
+offset_bottom = 134.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Resolution" type="SpinBox" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+min_value = 5.0
+max_value = 10000.0
+value = 5.0
+alignment = 1
+prefix = "Resolution"
+suffix = " pix"
+
+[node name="BlockSize" type="SpinBox" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+min_value = 10.0
+max_value = 300.0
+value = 10.0
+alignment = 1
+prefix = "BlockSize"
+suffix = "pix"
+
+[node name="HSeparator" type="HSeparator" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Save" type="Button" parent="Control/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Save"
+
+[node name="Label" type="Label" parent="Control/Panel"]
+layout_mode = 0
+offset_left = 152.0
+offset_top = 8.0
+offset_right = 261.0
+offset_bottom = 31.0
+text = "1 pix = 1 block"
+
+[connection signal="value_changed" from="Control/Panel/VBoxContainer/Resolution" to="." method="_on_radius_value_changed"]
+[connection signal="value_changed" from="Control/Panel/VBoxContainer/BlockSize" to="." method="_on_block_size_value_changed"]
+[connection signal="button_down" from="Control/Panel/VBoxContainer/Save" to="." method="_on_save_button_down"]

@@ -21,8 +21,8 @@ func _on_timer_timeout():
 	queue_free()
 
 func _clip_gen()->PackedVector2Array:
-	const R = 30.0
-	const POINT_COUNT = 20
+	const R = 20.0 #30
+	const POINT_COUNT = 12
 	var arr = []
 	for i in range(POINT_COUNT):
 		var angle = i*PI*2.0/POINT_COUNT
@@ -34,8 +34,11 @@ func _clip_gen()->PackedVector2Array:
 func _on_colli_scan_body_entered(body:Node2D):
 	if body.is_in_group("Block"):
 		var block:Block = body.get_parent()
-		block.after_optimize_clip(_clip_gen())
-		explo()
+		if !block.Busy:
+			#block.clip(_clip_gen())
+			block.after_optimize_clip(_clip_gen())
+			
+			explo()
 		
 		
 		

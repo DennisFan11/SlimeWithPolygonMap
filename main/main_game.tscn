@@ -1,22 +1,45 @@
-[gd_scene load_steps=12 format=3 uid="uid://blnwdifww66cs"]
+[gd_scene load_steps=15 format=3 uid="uid://blnwdifww66cs"]
 
 [ext_resource type="PackedScene" uid="uid://1uq0nql67i3x" path="res://map_node/map_node.tscn" id="1_cuc1h"]
 [ext_resource type="Script" path="res://main/main_game.gd" id="1_dwdkl"]
 [ext_resource type="PackedScene" uid="uid://cxemlhfmq0jvp" path="res://game/player/player.tscn" id="3_wge3u"]
 [ext_resource type="Script" path="res://Class/component/FPS.gd" id="4_p68nx"]
+[ext_resource type="Shader" path="res://main/ctr.gdshader" id="4_rdxdi"]
 [ext_resource type="Texture2D" uid="uid://dmmmsoxbwg61c" path="res://main/slimedustry_pre-alpha_5m x 5m.png" id="6_6g8qs"]
 [ext_resource type="Script" path="res://main/particle_node.gd" id="6_gfmh6"]
 [ext_resource type="PackedScene" uid="uid://cognosnyikmr2" path="res://UI/ui.tscn" id="7_ffds6"]
 [ext_resource type="Shader" path="res://main/MetaSmoke.gdshader" id="7_h6vxi"]
 [ext_resource type="Texture2D" uid="uid://bvkhq72ytbp1m" path="res://game/player/2d_lights_and_shadows_neutral_point_light.webp" id="9_xrepn"]
+[ext_resource type="PackedScene" uid="uid://b4f4pyah2ygsm" path="res://game/enemy/enemy_spawnner/enemy_spawnner.tscn" id="11_v1h6u"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3s7dy"]
+shader = ExtResource("4_rdxdi")
+shader_parameter/overlay = false
+shader_parameter/scanlines_opacity = 0.4
+shader_parameter/scanlines_width = 0.25
+shader_parameter/grille_opacity = 0.3
+shader_parameter/resolution = Vector2(640, 360)
+shader_parameter/pixelate = true
+shader_parameter/roll = true
+shader_parameter/roll_speed = 8.0
+shader_parameter/roll_size = 15.0
+shader_parameter/roll_variation = 1.8
+shader_parameter/distort_intensity = 0.05
+shader_parameter/noise_opacity = 0.4
+shader_parameter/noise_speed = 5.0
+shader_parameter/static_noise_intensity = 0.06
+shader_parameter/aberration = 0.03
+shader_parameter/brightness = 1.0
+shader_parameter/discolor = true
+shader_parameter/warp_amount = 0.2
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.5
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vy1ub"]
 shader = ExtResource("7_h6vxi")
 
-[sub_resource type="Environment" id="Environment_sfw0b"]
-background_mode = 3
-glow_enabled = true
-glow_intensity = 8.0
+[sub_resource type="Environment" id="Environment_kqbdv"]
 
 [node name="Main_game" type="Node2D"]
 script = ExtResource("1_dwdkl")
@@ -32,6 +55,16 @@ text = "awdwd"
 script = ExtResource("4_p68nx")
 
 [node name="UI" parent="CanvasLayer" instance=ExtResource("7_ffds6")]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+visible = false
+material = SubResource("ShaderMaterial_3s7dy")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="background" type="Polygon2D" parent="."]
 texture_filter = 6
@@ -79,7 +112,10 @@ color = Color(1, 1, 0.85098, 1)
 energy = 0.5
 shadow_enabled = true
 
+[node name="Enemy_spawnner" parent="test_node" instance=ExtResource("11_v1h6u")]
+position = Vector2(1030, -803)
+
 [node name="ToolNode" type="Node2D" parent="."]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_sfw0b")
+environment = SubResource("Environment_kqbdv")

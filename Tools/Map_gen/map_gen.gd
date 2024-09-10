@@ -1,56 +1,40 @@
 extends Node2D
-@onready var world:Sprite2D = $SubViewportContainer/SubViewport/world
 @onready var viewport:SubViewport = $SubViewportContainer/SubViewport
 @onready var camera:Camera2D = $SubViewportContainer/SubViewport/Camera2D
 
-var Resolution:int = 100 : #pix
-	set(new):
-		Resolution = new
-		_world_update()
-var Block_size:int = 100: #pix
-	set(new):
-		Block_size = new
-		_world_update()
-
-
-
+var Map_size:int = 40 #pix 100
+var Block_size:int = 250 #pix 100
+var Scan_precision:int = 100
 
 
 
 func _on_radius_value_changed(value):
-	Resolution = value
+	Map_size = value
 func _on_block_size_value_changed(value):
 	Block_size = value
 
-func _world_update()->void :
-	var vec := Vector2.ONE * Resolution
-	camera.offset = vec / 2
-	camera.zoom = Vector2.ONE
-	world.position = vec / 2
-	world.scale = vec / 512.0
-	
-enum {COPPER, IORN, COAL, ROCK, LUMIUM, BIOMASS}
-const colors = {
-	IORN: Color("7f7f7f"),
-	COPPER: Color("ae5e3e"),
-	LUMIUM: Color("0c8599"),
-	ROCK: Color("846358"),
-	COAL: Color("191919")
-}
-func _set_color():
-	world.material.set_shader_parameter("Iorn", colors[IORN])
-	world.material.set_shader_parameter("Copper", colors[COPPER])
-	world.material.set_shader_parameter("Lumium", colors[LUMIUM])
-	world.material.set_shader_parameter("Stone", colors[ROCK])
-	world.material.set_shader_parameter("Coal", colors[COAL])
 
+#enum _old{COPPER, IORN, COAL, ROCK, LUMIUM, BIOMASS}
+#const colors_old = {
+	#IORN: Color("7f7f7f"),
+	#COPPER: Color("ae5e3e"),
+	#LUMIUM: Color("0c8599"),
+	#ROCK: Color("846358"),
+	#COAL: Color("191919")
+#}
+enum {DIRT, STONE, COPPER, IORN, COAL}
+const colors = {
+	DIRT:Color(0.68, 0.36, 0.24),
+	STONE:Color(0.5,0.5,0.5),
+	COPPER:Color(0.914, 0.6, 0.3),
+	IORN:Color(0.2, 0.2, 0.2),
+	COAL:Color(0.1, 0.1, 0.1)
+}
 func _ready():
 	var resolution = $Control/Panel/VBoxContainer/Resolution
 	var block_size = $Control/Panel/VBoxContainer/BlockSize
-	resolution.value = Resolution
+	resolution.value = Map_size
 	block_size.value = Block_size
-	_world_update()
-	_set_color()
 func _process(delta):
 	camera.offset += Input.get_vector("a", "d", "w", "s")*delta*200
 func _input(event):
@@ -62,74 +46,75 @@ func _input(event):
 	
 func _on_save_button_down(): # SAVE MAP
 	var data := await _map_data_gen()
-	data.test_value = 13
+	
 	# 使用 ResourceSaver 保存资源
 	var error = ResourceSaver.save(data, "res://save_map.tres",0)
 	if error == OK:
 		print("Resource saved successfully!")
 	else:
 		print("Failed to save resource: ", error)
-	_world_update()
 
 
-func _get_img(pos:Vector2i, size:Vector2i)-> Image:
-	var vec := Vector2.ONE * Resolution
+func _get_polygons(block_id:Vector2, sprite:Sprite2D)-> Array[PackedVector2Array]:
+	var vec := Vector2.ONE * Map_size* Scan_precision
+	sprite.visible = true
+	sprite.position = vec / 2
+	sprite.scale = vec / 512.0
 	
-	camera.offset = pos + (size/2)
+	camera.offset = block_id* Scan_precision + Vector2.ONE * (Scan_precision/2)
 	camera.zoom = Vector2.ONE
-	world.position = vec / 2
-	world.scale = vec / 512.0
-	viewport.size = size
+	
+	viewport.size = Vector2.ONE * Scan_precision
 	
 	await RenderingServer.frame_post_draw
-	return viewport.get_texture().get_image()
-
-
-
-func _map_data_gen()-> Terrain_data:
-	var terrain_data := Terrain_data.new()
+	var img = viewport.get_texture().get_image()
+	sprite.visible = false
 	
-	var square = PackedVector2Array([
-		Vector2(0.0, 0.0),
-		Vector2(Block_size, 0.0),
-		Vector2(Block_size, Block_size),
-		Vector2(0.0, Block_size)
-	])
-	var faild = 0
-	var saved = 0
-	
-	var cut_size = Vector2i(100,100)
-	for block_x:int in range(0, Resolution, cut_size.x):
-		for block_y:int in range(0, Resolution, cut_size.y):
-			var block_pos := Vector2i(block_x, block_y)
-			var map_img := await _get_img(block_pos, cut_size)# pixel
-			print("cutting pos: ", block_pos)
+	var bitmap = BitMap.new()
+	bitmap.create_from_image_alpha(img)
+	#img.save_png("res://cuts/" + str(block_id.x*10000 + block_id.y)+".png")
+	var polygons = bitmap.opaque_to_polygons(Rect2(Vector2(), bitmap.get_size()))
+	for i in range(polygons.size()): # Re_scale
+		for j in polygons[i].size():
+			polygons[i][j] *= float(Block_size)/float(Scan_precision)
+	return polygons
+
+
+
+func _map_data_gen()-> Map_data:
+	var map_data = Map_data.new()
+	var sprites = [
+		$SubViewportContainer/SubViewport/Dirt,
+		$SubViewportContainer/SubViewport/Stone,
+		$SubViewportContainer/SubViewport/Copper,
+		$SubViewportContainer/SubViewport/Iorn,
+		$SubViewportContainer/SubViewport/Coal
+	]
+	for i:Sprite2D in sprites:
+		i.visible = false
+	var terrain_count:int = 0
+	for block_x:int in range(0, Map_size):
+		for block_y:int in range(0, Map_size):
+			var block_id := Vector2i(block_x, block_y)
+			var block_position = block_id * Block_size
+			print("generating: ",block_id)
 			
-			for x in range(block_pos.x, block_pos.x + cut_size.x):
-				for y in range(block_pos.y, block_pos.y + cut_size.y):
-					# 填充block
+			for id in range(sprites.size()):
+				var polygons := await _get_polygons(block_id, sprites[id])
+				for i in polygons:
 					var block := Block_data.new()
-					var pixel := map_img.get_pixelv(Vector2i(x,y)%cut_size)
-					block.position = Vector2i(x,y) * Block_size
-					block.polygon = square
-			
-					block.type = -1 # Color match
-					for i in colors.keys():
-						if colors[i].is_equal_approx(pixel):
-							block.type = i
-							saved+=1
-					if block.type == -1:
-						if pixel== Color(0,0,0,0) or pixel == Color(0,0,0,1): continue
-						#print("pixel match faild! ", pixel)
-						faild+=1
-						continue
-					terrain_data.blocks[Vector2i(x,y)] = block
+					block.position = block_position
+					block.polygon = i
+					block.type = id
 					
-	terrain_data.BlockSize = Vector2.ONE * Block_size
-	terrain_data.Resolution = Vector2.ONE * Resolution
+					map_data.Write_in_BlockData(block_id, block)
+					terrain_count+= 1
+	for i:Sprite2D in sprites:
+		i.visible = true
 	
-	print(saved, " block saved!")
-	print(faild, " block faild!")
-	print("size = ", terrain_data.blocks.size())
-	#map_img.save_png("check.png")
-	return terrain_data
+	map_data.BlockSize = Vector2.ONE * Block_size
+	map_data.Map_size = Vector2.ONE * Map_size
+	map_data.test_value = 13
+	#print("blocks:",  map_data.blocks.size())
+	print("terrain:", terrain_count)
+	return map_data

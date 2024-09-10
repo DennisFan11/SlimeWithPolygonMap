@@ -1,10 +1,17 @@
 extends Node2D
 
-const MAX = 300 # PIX 距離200pix 的時候手最長
-
-const k = 3.5 #2 or 4
-const d = 0.90
+const MAX = 200 # PIX 距離200pix 的時候手最長
 const R = 50+20
+
+func to_normal(vec:Vector2,origin:Vector2)->Vector2:
+	var angle = (Global.GravityCenter - origin).angle() - Vector2.DOWN.angle()
+	return vec.rotated(-1.0*angle)
+	
+func to_world(vec:Vector2,origin:Vector2)->Vector2:
+	var angle = (Global.GravityCenter - origin).angle() - Vector2.DOWN.angle()
+	return vec.rotated(1.0*angle)
+
+
 func _process(delta):
 	if $RayCast2D.is_colliding():
 		$Line2D.position = to_local($RayCast2D.get_collision_point())
@@ -12,21 +19,19 @@ func _process(delta):
 		$Line2D.position = $RayCast2D.target_position
 	
 	var rot = (get_global_mouse_position()-global_position).angle()
-	$Line2D.rotation = lerp_angle($Line2D.rotation, rot, 20.0*delta)
-	$remove.rotation = lerp_angle($Line2D.rotation, rot, 20.0*delta)
+	$Line2D.global_rotation = lerp_angle($Line2D.global_rotation, rot, 20.0*delta)
+	$remove.global_rotation = lerp_angle($Line2D.global_rotation, rot, 20.0*delta)
 	var y_scale = 1.0
-	if (get_global_mouse_position()-global_position).x>=0.0:
+	if to_normal((get_global_mouse_position()-global_position), global_position).x>=0.0:
 		y_scale = 1.0
 	else:
 		y_scale = -1.0
 	$Line2D.scale.y = y_scale
 
-
-
-func _physics_process(delta):
+func _physics_process(delta): # fixed
 	var dist = (get_global_mouse_position()-global_position).length()
 	var R = clampf(dist/MAX, 0.0, 1.0) * R
-	var pos = ((get_global_mouse_position()-global_position).normalized()*R)
+	var pos = ((to_local(get_global_mouse_position())-position).normalized()*R)
 	$RayCast2D.target_position = lerp($RayCast2D.target_position, pos, 20.0*delta)
 	
 

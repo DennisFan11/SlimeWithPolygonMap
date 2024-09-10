@@ -145,13 +145,13 @@ platform_on_leave = 2
 script = ExtResource("1_qufqi")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(28, 3)
+position = Vector2(34, 3)
 scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_qitit")
 animation = &"defult"
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-position = Vector2(28, 0)
+position = Vector2(34, 0)
 polygon = PackedVector2Array(-27, -9, 39, -9, 42, -6, 42, 3, 39, 6, -6, 6, -18, 15, -36, 15, -42, -3)
 
 [node name="Label" type="Label" parent="."]
@@ -160,10 +160,10 @@ offset_right = 40.0
 offset_bottom = 23.0
 
 [node name="Marker2D" type="Marker2D" parent="."]
-position = Vector2(67, -1)
+position = Vector2(76, 0)
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
-position = Vector2(64, -1)
+position = Vector2(67, -4)
 color = Color(1, 0.768627, 0.145098, 1)
 shadow_enabled = true
 texture = ExtResource("3_ks6l8")

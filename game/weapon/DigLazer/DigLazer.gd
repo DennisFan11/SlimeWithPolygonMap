@@ -27,5 +27,5 @@ func _physics_process(delta):
 		$Area2D.position = Vector2(1.0,0.0) * point.length()
 		if Input.is_action_pressed("click"):
 			destruct($Area2D.get_overlapping_bodies(), _get_global_polygon())
-		elif Input.is_action_pressed("rclick"):
-			construct($Area2D.get_overlapping_bodies(), _get_global_polygon())
+		#elif Input.is_action_pressed("rclick"):
+			#construct($Area2D.get_overlapping_bodies(), _get_global_polygon())

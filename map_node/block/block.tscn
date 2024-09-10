@@ -26,25 +26,14 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 
 [node name="test_line" type="Line2D" parent="StaticBody2D"]
-visible = false
 closed = true
 width = 3.0
 gradient = SubResource("Gradient_nj0hs")
 
 [node name="Label" type="Label" parent="."]
-visible = false
 offset_right = 50.0
 offset_bottom = 23.0
 text = "vertex"
-
-[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
-rect = Rect2(-150, -150, 300, 300)
-enable_node_path = NodePath("")
-
-[node name="ColorRect" type="ColorRect" parent="."]
-visible = false
-offset_right = 40.0
-offset_bottom = 40.0
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true

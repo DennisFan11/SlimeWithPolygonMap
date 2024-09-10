@@ -26,7 +26,7 @@ func set_height(height:float):
 ## 设置目标高度
 #func set_height(height):
 	#velocity += height
-var max_length = 70.0
+var max_length = 105.0 #70
 func slime_update(spring_constant, damping):
 	var force = spring_constant * (fixed_origin - global_position)
 	velocity += force

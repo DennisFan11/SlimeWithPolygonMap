@@ -1,18 +1,31 @@
 class_name Block
 extends Node2D
+var Busy:bool = false
 
-enum {COPPER, IORN, COAL, ROCK, LUMIUM, BIOMASS}
+#enum {COPPER, IORN, COAL, ROCK, LUMIUM, BIOMASS}
+#const colors = {
+	#IORN: Color("7f7f7f"),
+	#COPPER: Color("ae5e3e"),
+	#LUMIUM: Color("0c8599"),
+	#ROCK: Color("846358"),
+	#COAL: Color("191919")
+#}
+enum {DIRT, STONE, COPPER, IORN, COAL}
 const colors = {
-	IORN: Color("7f7f7f"),
-	COPPER: Color("ae5e3e"),
-	LUMIUM: Color("0c8599"),
-	ROCK: Color("846358"),
-	COAL: Color("191919")
+	DIRT:Color(0.68, 0.36, 0.24),
+	STONE:Color(0.5,0.5,0.5),
+	COPPER:Color(0.914, 0.6, 0.3),
+	IORN:Color(0.2, 0.2, 0.2),
+	COAL:Color(0.1, 0.1, 0.1)
 }
 var id
 func set_polygon(polygon:PackedVector2Array)-> void:
+	if Geometry2D.is_polygon_clockwise(polygon):
+		#queue_free()
+		pass
 	%Collision.set_deferred("polygon", polygon)
 	%Polygon.set_deferred("polygon", polygon)
+	#$StaticBody2D/NavigationObstacle2D.set_deferred("vertices", polygon)
 	$StaticBody2D/LightOccluder2D/Polygon2D.polygon = polygon
 	$StaticBody2D/LightOccluder2D.occluder.polygon = polygon
 	$StaticBody2D/test_line.points = polygon
@@ -23,14 +36,16 @@ func set_polygon(polygon:PackedVector2Array)-> void:
 	point/=polygon.size()
 	$Label.position = point
 	$Label.text = str(polygon.size()) + " Vertex"
-	if polygon.size() <= 3:
+	if polygon.size() < 3:
 		queue_free()
 func set_pos(vec:Vector2)-> void:
 	position = vec
 func set_type(id:int)-> void:
 	self.id = id
 	%Polygon.color = colors[id]
-func get_polygon()-> PackedVector2Array: # 建築獲取曲面用
+	if id ==STONE:
+		queue_free() # TEST FIXME
+func get_polygon()-> PackedVector2Array: 
 	return _get_global_polygon($StaticBody2D/test_line.points)
 
 func _get_global_polygon(polygon:PackedVector2Array)-> PackedVector2Array:
@@ -45,6 +60,22 @@ func _get_local_polygon(polygon:PackedVector2Array)-> PackedVector2Array:
 	return arr
 
 #------------------------
+func _sort_points(array:Array)->PackedVector2Array: # 計算順時針多邊形
+	"""
+	// 輸入: 2點座標 (全域座標)
+	輸出: 順時針多邊形 points
+	"""
+	var cp = Vector2.ZERO
+	for i in array:
+		cp+=i
+	cp/=array.size()
+	var center_angle_sort = func(A:Vector2,B:Vector2) -> bool: # 中心最大角度排序 lambda (順時鐘)
+		if (A-cp).angle()>=(B-cp).angle():
+			return false
+		return true
+	array.sort_custom(center_angle_sort)# (順時鐘排序)
+	return PackedVector2Array(array)
+
 func _merge_nearby_cut_edges(polygon_points: PackedVector2Array, cut_edges: PackedVector2Array, merge_distance: float) -> PackedVector2Array:
 	var merged_cut_edges = PackedVector2Array()
 	
@@ -138,10 +169,12 @@ var scene = preload("res://map_node/block/block.tscn")
 
 
 func _fixed_polygon(polygon_points, origin): # 頂點優化
+	if polygon_points.size()<= 10:
+		return polygon_points
 	
-	const merge_distance = 10.0 # 10
-	const iterations = 5 #20
-	const angle_threshold = 10.0 # 10 30
+	const merge_distance = 20.0 # 10
+	const iterations = 3 #20
+	const angle_threshold = 20.0 # 10 30
 	var cut_edges = _get_cut_indices(polygon_points, origin)
 	polygon_points = _merge_nearby_cut_edges(polygon_points, cut_edges, merge_distance)
 	polygon_points = _smooth_cut_edges(polygon_points, cut_edges, iterations)
@@ -202,7 +235,7 @@ func connect_hole_with_algorithm(outer_polygon: PackedVector2Array, hole_polygon
 	$Timer.start(0.1)
 	return combined_polygon
 
-
+#------------------------^^算法區^^----------------
 # FIXME remove
 
 func clip(global_polygon:PackedVector2Array)-> float:
@@ -239,7 +272,6 @@ func clip(global_polygon:PackedVector2Array)-> float:
 		area += calculate_polygon_area(i)
 	return area
 	
-
 
 func merge(global_polygon:PackedVector2Array):
 	var origin = _get_global_polygon($StaticBody2D/test_line.points)
@@ -297,7 +329,7 @@ func no_optimize_merge(global_polygon:PackedVector2Array):
 	
 	$Timer.start(1)
 
-func split():
+func split(): # 區塊優化
 	var BLOCK_SIZE = float(Global.MapNode.BlockSize.x)
 	var arr_pos = []
 	var arr_poly = []
@@ -318,6 +350,7 @@ func split():
 	# 相交生成
 	for i in range(arr_pos.size()):
 		var need_polygon = Geometry2D.intersect_polygons(get_polygon(), arr_poly[i])
+		
 		for cpoly:PackedVector2Array in need_polygon: # 多邊形分裂
 			var node = scene.instantiate()
 			get_parent().add_child(node)
@@ -328,15 +361,29 @@ func split():
 			node.set_type(id)
 	# 區塊切割
 	var polygon = get_polygon()
-	for i in range(arr_pos.size()):
-		var save = Geometry2D.clip_polygons(polygon, arr_poly[i])
-		if save.size() == 0:
-			queue_free()
-			return
-		polygon = save[0]
-	set_polygon(_get_local_polygon(polygon)) # 頂點優化, 轉換至本地
+	var pos = global_position
+	var cut = PackedVector2Array([
+				Vector2(pos.x,pos.y),
+				Vector2(pos.x+BLOCK_SIZE,pos.y),
+				Vector2(pos.x+BLOCK_SIZE,pos.y+BLOCK_SIZE),
+				Vector2(pos.x,pos.y+BLOCK_SIZE)
+			])
+	var need_polygon = Geometry2D.intersect_polygons(polygon, cut)
+	if need_polygon.size()!=0:
+		set_polygon(_get_local_polygon(need_polygon.pop_front()))
+		for cpoly:PackedVector2Array in need_polygon: # 多邊形分裂
+			var node = scene.instantiate()
+			get_parent().add_child(node)
+			node.set_pos(pos)
+			node.set_polygon(node._get_local_polygon(cpoly)) # 頂點優化, 轉換至本地
+			node.set_type(id)
+	else:
+		queue_free()
+		return
 	
-func after_optimize_clip(global_polygon:PackedVector2Array)-> float:
+func after_optimize_clip(global_polygon:PackedVector2Array)-> float: # TEST 高壓場景用
+	Busy = true
+	await get_tree().physics_frame
 	var origin = _get_global_polygon(%Collision.polygon)
 	if last_origin.size() == 0:
 		last_origin = origin
@@ -368,6 +415,8 @@ func after_optimize_clip(global_polygon:PackedVector2Array)-> float:
 	for i in inter_polygons:
 		area += calculate_polygon_area(i)
 	$SelfOptimizeTimer.start(1.0)
+	
+	Busy = false
 	return area
 
 var last_origin = []

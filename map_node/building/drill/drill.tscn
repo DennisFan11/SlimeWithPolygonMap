@@ -1,9 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://b8ux4ecamikab"]
+[gd_scene load_steps=7 format=3 uid="uid://b8ux4ecamikab"]
 
 [ext_resource type="Script" path="res://map_node/building/drill/drill.gd" id="1_pjbws"]
-[ext_resource type="Texture2D" uid="uid://cfwup1sbphx3p" path="res://map_node/building/drill/drillA.png" id="1_t76pf"]
-[ext_resource type="Texture2D" uid="uid://dmbk3w244sq84" path="res://map_node/building/drill/drillB.png" id="2_a2pb7"]
-[ext_resource type="PackedScene" uid="uid://br808mkkt3ntq" path="res://map_node/building/components/terrain_scanner.tscn" id="4_txpgn"]
+[ext_resource type="Texture2D" uid="uid://crc70ol32uanr" path="res://map_node/building/drill/drill_A.png" id="2_dq2n5"]
+[ext_resource type="Texture2D" uid="uid://c683jbpfslovo" path="res://map_node/building/drill/drill_B.png" id="3_h8c7y"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_b7wh8"]
 radius = 24.0208
@@ -18,14 +17,14 @@ radius = 12.0
 script = ExtResource("1_pjbws")
 
 [node name="DrillA" type="Sprite2D" parent="."]
-position = Vector2(0, -48)
+position = Vector2(0, -36)
 scale = Vector2(3, 3)
-texture = ExtResource("1_t76pf")
+texture = ExtResource("2_dq2n5")
 
 [node name="DrillB" type="Sprite2D" parent="."]
-position = Vector2(0, -18)
+position = Vector2(0, -23)
 scale = Vector2(3, 3)
-texture = ExtResource("2_a2pb7")
+texture = ExtResource("3_h8c7y")
 
 [node name="BodyArea2D" type="Area2D" parent="."]
 
@@ -44,5 +43,3 @@ shape = SubResource("CircleShape2D_t70kd")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LandingGearR"]
 position = Vector2(33, 0)
 shape = SubResource("CircleShape2D_ryyf3")
-
-[node name="Terrain_scanner" parent="." instance=ExtResource("4_txpgn")]

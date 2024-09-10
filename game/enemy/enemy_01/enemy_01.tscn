@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://bpm6fj8naffsi"]
+
+[ext_resource type="Script" path="res://game/enemy/enemy_01/enemy.gd" id="1_pih5p"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vlosa"]
+radius = 12.0416
+
+[node name="enemy_01" type="Node2D"]
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+motion_mode = 1
+script = ExtResource("1_pih5p")
+
+[node name="Polygon2D" type="Polygon2D" parent="CharacterBody2D"]
+color = Color(1, 0.418931, 0.326941, 1)
+polygon = PackedVector2Array(21, 0, -12, 12, -12, -12)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+shape = SubResource("CircleShape2D_vlosa")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="CharacterBody2D"]
+radius = 12.0
+max_speed = 300.0
+debug_enabled = true
+debug_path_custom_color = Color(1, 0.546135, 0.434269, 1)
