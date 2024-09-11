@@ -3,7 +3,7 @@ extends Node2D
 
 var Map_size:Vector2i
 var BlockSize:Vector2i
-@onready var Block_node:Node2D = $NavigationRegion2D/CanvasGroup #  $Building
+@onready var Block_node:Node2D = $Building #$NavigationRegion2D/CanvasGroup #  
 @onready var Building_node:Node2D = $Building
 
 func _ready():

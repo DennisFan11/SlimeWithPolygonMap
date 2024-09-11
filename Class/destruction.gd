@@ -37,10 +37,10 @@ func construct(bodies:Array[Node2D] , global_polygon:PackedVector2Array,selector
 		if i.is_in_group("Block"):
 			var block:Block = i.get_parent()
 			if select == block:
-				select.merge(global_polygon)
+				select.no_optimize_merge(global_polygon)
 				continue
 			elif block.id == select.id:
-				block.merge(global_polygon)
+				block.no_optimize_merge(global_polygon)
 				select.no_optimize_merge(block.get_polygon())
 				block.queue_free()
 				continue
@@ -69,10 +69,10 @@ func new_construct(bodies:Array[Node2D] , global_polygon:PackedVector2Array, id:
 		if i.is_in_group("Block"):
 			var block:Block = i.get_parent()
 			if block == node:
-				node.merge(global_polygon)
+				node.no_optimize_merge(global_polygon)
 				continue
 			if block.id == id:
-				block.merge(global_polygon)
+				block.no_optimize_merge(global_polygon)
 				node.no_optimize_merge(block.get_polygon())
 				block.queue_free()
 				continue

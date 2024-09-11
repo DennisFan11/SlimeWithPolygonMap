@@ -117,7 +117,7 @@ func _smooth_cut_edges(polygon_points: PackedVector2Array, cut_edges: PackedVect
 		smoothed_points = new_points
 	return smoothed_points
 
-func _reduce_polygon_vertices(polygon_points: PackedVector2Array, angle_threshold: float) -> PackedVector2Array:
+func _reduce_polygon_vertices(polygon_points: PackedVector2Array, cut_edges: PackedVector2Array, angle_threshold: float) -> PackedVector2Array:
 	var reduced_points = PackedVector2Array()
 	var count = polygon_points.size()
 	
@@ -135,7 +135,7 @@ func _reduce_polygon_vertices(polygon_points: PackedVector2Array, angle_threshol
 		var angle = v1.angle_to(v2)
 		
 		# 只有当角度大于指定阈值时，才保留当前顶点
-		if abs(angle) > deg_to_rad(angle_threshold):
+		if abs(angle) > deg_to_rad(angle_threshold) or current_point in cut_edges:
 			reduced_points.append(current_point)
 	
 	return reduced_points
@@ -171,14 +171,24 @@ var scene = preload("res://map_node/block/block.tscn")
 func _fixed_polygon(polygon_points, origin): # 頂點優化
 	if polygon_points.size()<= 10:
 		return polygon_points
-	
-	const merge_distance = 20.0 # 10
-	const iterations = 3 #20
-	const angle_threshold = 20.0 # 10 30
+	const merge_distance = 25.0 # 10 一格 25
+	const iterations = 1 #20 3 
+	const angle_threshold = 10.0 # 10
 	var cut_edges = _get_cut_indices(polygon_points, origin)
-	polygon_points = _merge_nearby_cut_edges(polygon_points, cut_edges, merge_distance)
+	
 	polygon_points = _smooth_cut_edges(polygon_points, cut_edges, iterations)
-	polygon_points = _reduce_polygon_vertices(polygon_points, angle_threshold)
+	
+	#TEST 由切割面改為非方塊邊緣
+	var BLOCK_SIZE = float(Global.MapNode.BlockSize.x)
+	var arr = []
+	for i:Vector2 in polygon_points:
+		if (fmod(i.x, BLOCK_SIZE) > 10) and (fmod(i.y, BLOCK_SIZE) > 10):
+			arr.append(i)
+	cut_edges = arr
+	
+	
+	polygon_points = _merge_nearby_cut_edges(polygon_points, cut_edges, merge_distance)
+	polygon_points = _reduce_polygon_vertices(polygon_points, cut_edges, angle_threshold)
 	return polygon_points
 
 
@@ -280,14 +290,14 @@ func merge(global_polygon:PackedVector2Array):
 		queue_free()
 		return
 	
-	#var merged:Array[PackedVector2Array] = []
-	#for i in range(merge_polygon.size()):# 全體優化
-		#var polygon = _fixed_polygon(merge_polygon[i], origin)
+	var merged:Array[PackedVector2Array] = []
+	for i in range(merge_polygon.size()):# 全體優化
+		var polygon = _fixed_polygon(merge_polygon[i], origin)
 		#if Geometry2D.is_polygon_clockwise(polygon):
 			#merged[i-1] = connect_hole_with_algorithm(merged[i-1], polygon)
 			#continue
-		#merged.append(polygon)
-	var merged = merge_polygon
+		merged.append(polygon)
+	#var merged = merge_polygon
 	
 	var poly = merged.pop_front()
 	set_polygon(_get_local_polygon(poly)) # 頂點優化, 轉換至本地
@@ -301,7 +311,7 @@ func merge(global_polygon:PackedVector2Array):
 		node.set_type(id)
 	$Timer.start(1)
 
-func no_optimize_merge(global_polygon:PackedVector2Array):
+func no_optimize_merge(global_polygon:PackedVector2Array): # REMOVE FIXME
 	var origin = _get_global_polygon($StaticBody2D/test_line.points)
 	var merge_polygon = Geometry2D.merge_polygons(origin, global_polygon)
 	if merge_polygon.size() == 0:

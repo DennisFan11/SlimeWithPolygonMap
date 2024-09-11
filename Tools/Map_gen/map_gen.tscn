@@ -24,6 +24,7 @@ shader = ExtResource("6_vedwe")
 shader = ExtResource("7_ptssa")
 
 [node name="Map_gen" type="Node2D"]
+texture_filter = 1
 script = ExtResource("1_fqmn4")
 
 [node name="Panel" type="Panel" parent="."]
@@ -53,11 +54,13 @@ canvas_item_default_texture_filter = 0
 render_target_update_mode = 4
 
 [node name="Dirt" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+texture_filter = 1
 material = SubResource("ShaderMaterial_kr16r")
 position = Vector2(256, 256)
 texture = ExtResource("3_jt1jw")
 
 [node name="Stone" type="Sprite2D" parent="SubViewportContainer/SubViewport"]
+texture_filter = 1
 material = SubResource("ShaderMaterial_xq8m6")
 position = Vector2(256, 256)
 texture = ExtResource("3_jt1jw")

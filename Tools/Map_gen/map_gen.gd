@@ -4,7 +4,7 @@ extends Node2D
 
 var Map_size:int = 40 #pix 100
 var Block_size:int = 250 #pix 100
-var Scan_precision:int = 100
+var Scan_precision:int = 250
 
 
 
@@ -71,9 +71,9 @@ func _get_polygons(block_id:Vector2, sprite:Sprite2D)-> Array[PackedVector2Array
 	sprite.visible = false
 	
 	var bitmap = BitMap.new()
-	bitmap.create_from_image_alpha(img)
+	bitmap.create_from_image_alpha(img, 0.2)
 	#img.save_png("res://cuts/" + str(block_id.x*10000 + block_id.y)+".png")
-	var polygons = bitmap.opaque_to_polygons(Rect2(Vector2(), bitmap.get_size()))
+	var polygons = bitmap.opaque_to_polygons(Rect2(Vector2(), bitmap.get_size()), 3.0)
 	for i in range(polygons.size()): # Re_scale
 		for j in polygons[i].size():
 			polygons[i][j] *= float(Block_size)/float(Scan_precision)
