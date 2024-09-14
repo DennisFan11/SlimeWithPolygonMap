@@ -3,12 +3,12 @@ extends Node2D
 
 var Map_size:Vector2i
 var BlockSize:Vector2i
-@onready var Block_node:Node2D = $Building #$NavigationRegion2D/CanvasGroup #  
+@onready var Block_node:Node2D =  $NavigationRegion2D/CanvasGroup #   $Building
 @onready var Building_node:Node2D = $Building
 
 func _ready():
 	_load()
-	$NavigationRegion2D.bake_navigation_polygon(true)
+	#$NavigationRegion2D.bake_navigation_polygon(true)
 #func get_blocks(global_pos:Vector2i)-> Array[Block]: # 委派
 	#return data.get_blocks(global_pos)
 
@@ -31,7 +31,8 @@ var time:float = 50.0
 func _physics_process(delta):
 	time+= delta
 	if time >= 20:
-		$NavigationRegion2D.bake_navigation_polygon(true)
+		pass
+		#$NavigationRegion2D.bake_navigation_polygon(true)
 		
 
 

@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dum5fmqjc3316" path="res://game/weapon/Guns/particle/alpha_map_16.png" id="1_pi18y"]
 
 [sub_resource type="Curve" id="Curve_02dx3"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.366733, 0.293373), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.258621, 0.747253), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_mxth2"]

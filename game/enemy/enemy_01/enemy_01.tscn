@@ -8,6 +8,7 @@ radius = 12.0416
 [node name="enemy_01" type="Node2D"]
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+collision_layer = 0
 motion_mode = 1
 script = ExtResource("1_pih5p")
 

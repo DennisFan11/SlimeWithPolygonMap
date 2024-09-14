@@ -8,13 +8,21 @@ func _physics_process(delta):
 	move_and_slide()
 
 
-var particle := preload("res://game/weapon/Guns/particle/exlpo.tscn")
+var exlpo := preload("res://game/weapon/Guns/particle/exlpo.tscn")
+var spark := preload("res://game/weapon/Guns/particle/spark.tscn")
 func explo():
-	var node := particle.instantiate()
+	var node := exlpo.instantiate()
 	Global.ParticleNode.MetaSmoke.add_child(node)
 	node.global_position = global_position
 	node.connect("finished", node.queue_free)
 	node.emitting = true
+	
+	#node = spark.instantiate()
+	#Global.ParticleNode.add_child(node)
+	#node.global_position = global_position
+	#node.connect("finished", node.queue_free)
+	#node.emitting = true
+	
 	queue_free()
 
 func _on_timer_timeout():
