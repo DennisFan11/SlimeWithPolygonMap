@@ -28,22 +28,34 @@ func Write_in_BlockData(id:Vector2i, new_block:Block_data): # 添加方塊的接
 	new.append(new_block) # 添加新方塊
 	Terrain[id] = new
 
-#
-#
+func Write_empty_data(id:Vector2i):
+	if !Terrain.has(id):
+		Terrain[id] = []
+	
+
+var NAVIGATION := preload("res://map_node/Navigation/navigation.tscn")
 var BLOCK_SCENE := preload("res://map_node/block/block.tscn")
 func full_load()-> Node2D:
 	var root := Node2D.new()
 	print("load ", Terrain.size(), " blocks")
+	
 	for i:Vector2i in Terrain.keys():
+		
+		var nav_node = NAVIGATION.instantiate()
+		nav_node.BlockSize = BlockSize
+		nav_node.GlobalPosition = i * BlockSize
+		root.add_child(nav_node)
+		
 		for j:int in range(Terrain[i].size()):
 			var node := BLOCK_SCENE.instantiate()
-			root.add_child(node)
+			nav_node.add_child(node)
 			
-			node.set_polygon(Terrain[i][j].polygon)
+			node.set_polygon(Terrain[i][j].polygon, false)
 			node.set_pos(Terrain[i][j].position)
 			node.set_type(Terrain[i][j].type)
 			
 			#blocks[i] = node
+		
 	return root
 #
 #func get_blocks(global_pos:Vector2i)-> Array[Block]:

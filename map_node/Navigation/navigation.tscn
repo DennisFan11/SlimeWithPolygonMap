@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1bs2h4qgvp4c"]
+
+[ext_resource type="Script" path="res://map_node/Navigation/navigation.gd" id="1_4g4sx"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_bbb3t"]
+resource_local_to_scene = true
+
+[node name="Navigation" type="NavigationRegion2D"]
+navigation_polygon = SubResource("NavigationPolygon_bbb3t")
+enter_cost = 1.0
+script = ExtResource("1_4g4sx")
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "not"
+
+[connection signal="bake_finished" from="." to="." method="_on_bake_finished"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -2,9 +2,9 @@ extends Node2D
 @onready var viewport:SubViewport = $SubViewportContainer/SubViewport
 @onready var camera:Camera2D = $SubViewportContainer/SubViewport/Camera2D
 
-var Map_size:int = 40 #pix 100
-var Block_size:int = 250 #pix 100
-var Scan_precision:int = 250
+var Map_size:int = 20 #pix 40
+var Block_size:int = 250 #pix 250
+var Scan_precision:int = 250 # 250
 
 
 
@@ -98,6 +98,7 @@ func _map_data_gen()-> Map_data:
 			var block_id := Vector2i(block_x, block_y)
 			var block_position = block_id * Block_size
 			print("generating: ",block_id)
+			var block_terrain_count:int = 0
 			
 			for id in range(sprites.size()):
 				var polygons := await _get_polygons(block_id, sprites[id])
@@ -109,6 +110,9 @@ func _map_data_gen()-> Map_data:
 					
 					map_data.Write_in_BlockData(block_id, block)
 					terrain_count+= 1
+					block_terrain_count+= 1
+			if block_terrain_count == 0:
+				map_data.Write_empty_data(block_id)
 	for i:Sprite2D in sprites:
 		i.visible = true
 	

@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://pkxasymv5t1i"]
+
+[ext_resource type="Script" path="res://Debug_node/pathfind/pathfind_debugger.gd" id="1_umsdu"]
+
+[node name="Pathfind_debugger" type="Node2D"]
+script = ExtResource("1_umsdu")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_postprocessing = 1
+debug_enabled = true
+debug_use_custom = true
+debug_path_custom_color = Color(1, 1, 0, 1)
+debug_path_custom_point_size = 16.0
+debug_path_custom_line_width = 8.0
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.05
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

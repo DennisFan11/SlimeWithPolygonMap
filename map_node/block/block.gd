@@ -1,7 +1,6 @@
 class_name Block
 extends Node2D
 var Busy:bool = false
-
 #enum {COPPER, IORN, COAL, ROCK, LUMIUM, BIOMASS}
 #const colors = {
 	#IORN: Color("7f7f7f"),
@@ -19,13 +18,12 @@ const colors = {
 	COAL:Color(0.1, 0.1, 0.1)
 }
 var id
-func set_polygon(polygon:PackedVector2Array)-> void:
+func set_polygon(polygon:PackedVector2Array, rebake=true)-> void:
 	if Geometry2D.is_polygon_clockwise(polygon):
 		#queue_free()
 		pass
 	%Collision.set_deferred("polygon", polygon)
 	%Polygon.set_deferred("polygon", polygon)
-	#$StaticBody2D/NavigationObstacle2D.set_deferred("vertices", polygon)
 	$StaticBody2D/LightOccluder2D/Polygon2D.polygon = polygon
 	$StaticBody2D/LightOccluder2D.occluder.polygon = polygon
 	$StaticBody2D/test_line.points = polygon
@@ -36,8 +34,11 @@ func set_polygon(polygon:PackedVector2Array)-> void:
 	point/=polygon.size()
 	$Label.position = point
 	$Label.text = str(polygon.size()) + " Vertex"
+	if rebake:
+		get_parent().ReBake()
 	if polygon.size() < 3:
 		queue_free()
+	
 func set_pos(vec:Vector2)-> void:
 	position = vec
 func set_type(id:int)-> void:
@@ -435,13 +436,30 @@ func self_optimize():
 		return
 	set_polygon(_get_local_polygon(_fixed_polygon(get_polygon(), last_origin)))
 	last_origin = PackedVector2Array()
-	
-	
-	
+
+
+
+#func _bake():
+	#var BLOCK_SIZE = float(Global.MapNode.BlockSize.x)
+#
+	#var polygon = NavigationPolygon.new()
+	#var outline = PackedVector2Array([
+		#Vector2(0, 0),
+		#Vector2(0, BLOCK_SIZE),
+		#Vector2(BLOCK_SIZE, BLOCK_SIZE),
+		#Vector2(BLOCK_SIZE, 0)
+	#])
+	#polygon.add_outline(outline)
+	#polygon.make_polygons_from_outlines()
+	##NavigationServer2D.parse_source_geometry_data()
+	##NavigationServer2D.bake_from_source_geometry_data()
+	#$Nav.navigation_polygon = polygon
+	#$Nav.bake_navigation_polygon()
 	
 func _on_timer_timeout():
 	split()
-
+func _exit_tree() -> void:
+	get_parent().ReBake()
 
 func _on_self_optimize_timer_timeout():
 	self_optimize()

@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cognosnyikmr2" path="res://UI/ui.tscn" id="7_ffds6"]
 [ext_resource type="Shader" path="res://main/MetaSmoke.gdshader" id="7_h6vxi"]
 [ext_resource type="Texture2D" uid="uid://bvkhq72ytbp1m" path="res://game/player/2d_lights_and_shadows_neutral_point_light.webp" id="9_xrepn"]
-[ext_resource type="PackedScene" uid="uid://b4f4pyah2ygsm" path="res://game/enemy/enemy_spawnner/enemy_spawnner.tscn" id="11_v1h6u"]
+[ext_resource type="PackedScene" uid="uid://pkxasymv5t1i" path="res://Debug_node/pathfind/pathfind_debugger.tscn" id="11_541aq"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3s7dy"]
 shader = ExtResource("4_rdxdi")
@@ -112,8 +112,9 @@ color = Color(1, 1, 0.85098, 1)
 energy = 0.5
 shadow_enabled = true
 
-[node name="Enemy_spawnner" parent="test_node" instance=ExtResource("11_v1h6u")]
-position = Vector2(1030, -803)
+[node name="DebugNode" type="Node2D" parent="."]
+
+[node name="Pathfind_debugger" parent="DebugNode" instance=ExtResource("11_541aq")]
 
 [node name="ToolNode" type="Node2D" parent="."]
 
